@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.ImageProcessingActivity">
+
+    <include
+        android:id="@+id/tb_ImageProcessing"
+        layout="@layout/layout_toolbar"></include>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="90"
+        android:background="@color/my_lighter_primary">
+
+        <ImageView
+            android:id="@+id/img_Photo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:src="@drawable/images" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_Action"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/windowTitleSize"
+            android:layout_gravity="bottom"
+            android:background="#7ea3a2ad"></android.support.v7.widget.RecyclerView>
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:background="@color/my_primary">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_MainFunction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/my_primary"
+            android:numColumns="5"
+            android:textAlignment="center"></android.support.v7.widget.RecyclerView>
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.RotationImageActivity">
+
+    <include
+        android:id="@+id/tb_RotationImage"
+        layout="@layout/layout_toolbar"></include>
+
+    <ImageView
+        android:id="@+id/img_RIPhoto"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="80"
+        android:scaleType="fitCenter"
+        android:src="@drawable/images" />
+
+    <com.tistory.dwfox.dwrulerviewlibrary.view.ScrollingValuePicker
+        android:id="@+id/sv_Ruler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:background="@color/my_lighter_primary"
+        android:clickable="false"></com.tistory.dwfox.dwrulerviewlibrary.view.ScrollingValuePicker>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:background="@color/my_primary"
+        android:orientation="horizontal"
+        android:padding="3dp">
+
+        <ImageButton
+            android:id="@+id/btn_RIFlip"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:background="@null"
+            android:src="@drawable/ic_flip_24dp"
+            android:tooltipText="Lật" />
+
+        <Button
+            android:id="@+id/btn_RIAutoAdjustment"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="6"
+            android:background="@drawable/white_radius_button_selector"
+            android:text="Tự động"
+            android:textAllCaps="false" />
+
+        <ImageButton
+            android:id="@+id/btn_RIRotate"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:background="@null"
+            android:src="@drawable/ic_rotate_24dp"
+            android:tooltipText="Xoay 90 độ" />
+    </LinearLayout>
+</LinearLayout>
