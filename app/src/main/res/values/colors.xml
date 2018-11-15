@@ -9,7 +9,7 @@
     <color name="my_light_primary">#4870ab</color>
     <color name="my_dark_primary">#001f4e</color>
     <color name="my_lighter_primary">#749ddb</color>
-    <color name="my_lightest_primary">#9dbff3</color>
+    <color name="my_lightest_primary">#bed0eb</color>
     <color name="my_secondary">#c62828</color>
     <color name="my_light_secondary">#ff5f52</color>
     <color name="my_dark_secondary">#8e0000</color>
@@ -18,4 +18,9 @@
     <color name="testcolor">#5c03a9f4</color>
     <color name="blur">#59323232</color>
     <color name="blue_blur">#afafaf</color>
+
+    <color name="default_screen_bg">#f9f9f9</color>
+    <color name="rounded_container_bg">#222222</color>
+    <color name="rounded_container_border">#3b3f44</color>
+    <color name="light_gray_header_color">#646663</color>
 </resources>

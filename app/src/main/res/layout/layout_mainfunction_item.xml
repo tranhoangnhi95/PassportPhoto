@@ -11,8 +11,8 @@
         android:src="@drawable/ic_brush_24dp"
         android:id="@+id/img_MFImage"
         android:scaleType="fitCenter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="?android:attr/actionBarSize"
+        android:layout_height="?android:attr/actionBarSize" />
     <TextView
         android:id="@+id/txt_MFName"
         android:textColor="@color/my_white"

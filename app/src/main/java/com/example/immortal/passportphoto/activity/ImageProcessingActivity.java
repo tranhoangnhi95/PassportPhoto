@@ -3,6 +3,8 @@ package com.example.immortal.passportphoto.activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +18,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.immortal.passportphoto.R;
 import com.example.immortal.passportphoto.adapter.MainFunctionAdapter;
@@ -36,6 +41,7 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -53,11 +59,12 @@ public class ImageProcessingActivity extends AppCompatActivity {
 
     private ImageView imgMyPhoto;
     private Toolbar tbImageProc;
+    private SeekBar sbValue;
     private RecyclerView rvMainFunction;
     private MainFunctionAdapter mainFunctionAdapter;
     private ArrayList<MainFunction> mainFunctions;
     private Bitmap imgBitmap;
-
+    private TextView txtValue;
     private CascadeClassifier mCascadeClassifier;
     private MatOfRect faces;
     private Bitmap myImageBitmap;
@@ -75,6 +82,11 @@ public class ImageProcessingActivity extends AppCompatActivity {
         imgMyPhoto = findViewById(R.id.img_Photo);
         tbImageProc = findViewById(R.id.tb_ImageProcessing);
         rvMainFunction = findViewById(R.id.rv_MainFunction);
+        txtValue = findViewById(R.id.txt_Value);
+        sbValue = findViewById(R.id.sb_Value);
+        sbValue.getProgressDrawable().setColorFilter(getResources().getColor(R.color.my_lighter_primary), PorterDuff.Mode.MULTIPLY);
+        sbValue.getThumb().setColorFilter(getResources().getColor(R.color.my_lighter_primary), PorterDuff.Mode.SRC_ATOP);
+        sbValue.setProgress(100);
         setSupportActionBar(tbImageProc);
         setTitle("Trở về");
         loadingActionBar();
@@ -82,14 +94,25 @@ public class ImageProcessingActivity extends AppCompatActivity {
 //        mCascadeClassifier = new CascadeClassifier(x.getAbsolutePath());
 //        myImageMat = new Mat();
 //        faces = new MatOfRect();
+
+        String filename = getIntent().getStringExtra("image");
+        try {
+            FileInputStream is = this.openFileInput(filename);
+            imgBitmap = BitmapFactory.decodeStream(is);
+            imgMyPhoto.setImageBitmap(imgBitmap);
+            is.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         if (mainFunctions == null) {
             mainFunctions = new ArrayList<>();
         }
         if (mainFunctions.isEmpty()) {
-            MainFunction mainFunction1 = new MainFunction("Chỉnh sửa", R.drawable.ic_brush_24dp);
+            MainFunction mainFunction1 = new MainFunction("Mặc định", this.imgBitmap);
             mainFunctions.add(mainFunction1);
 
-            MainFunction mainFunction2 = new MainFunction("Xoay", R.drawable.ic_rotate_24dp);
+            MainFunction mainFunction2 = new MainFunction("Sáng tối", this.imgBitmap);
             mainFunctions.add(mainFunction2);
         }
 
@@ -98,16 +121,6 @@ public class ImageProcessingActivity extends AppCompatActivity {
         rvMainFunction.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
         rvMainFunction.setAdapter(mainFunctionAdapter);
         Intent iRecivew = getIntent();
-        Uri imageUri = Uri.parse(iRecivew.getStringExtra("img"));
-        try {
-            InputStream inputStream = getContentResolver().openInputStream(imageUri);
-            imgBitmap = BitmapFactory.decodeStream(inputStream);
-            imgMyPhoto.setImageBitmap(imgBitmap);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-
     }
 
     private void loadingActionBar() {
@@ -124,6 +137,26 @@ public class ImageProcessingActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+
+        sbValue.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            int progressChanged = 0;
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                progressChanged = i;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Toast.makeText(getApplicationContext(), "Seekbar progess:" + progressChanged, Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     private void addrectangle() {
@@ -131,7 +164,7 @@ public class ImageProcessingActivity extends AppCompatActivity {
         myImageMat = new Mat();
         faces = new MatOfRect();
         Utils.bitmapToMat(imgBitmap, myImageMat);
-        Imgproc.cvtColor(myImageMat,myImageMat, Imgproc.COLOR_RGBA2GRAY);
+        Imgproc.cvtColor(myImageMat, myImageMat, Imgproc.COLOR_RGBA2GRAY);
         mCascadeClassifier.detectMultiScale(myImageMat, faces, 1.1, 10, 10, new Size(50, 50), new Size());
         Rect[] facesArray = faces.toArray();
         for (int i = 0; i < facesArray.length; i++)
@@ -191,7 +224,7 @@ public class ImageProcessingActivity extends AppCompatActivity {
 //        source.release();
 //        bgModel.release();
 //        fgModel.release();
-        Log.d(TAG,"end");
+        Log.d(TAG, "end");
 
 
     }
@@ -205,20 +238,84 @@ public class ImageProcessingActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.mn_Check) {
-//            addrectangle();
             Intent iToRatationImage = new Intent(ImageProcessingActivity.this, RotationImageActivity.class);
             startActivity(iToRatationImage);
-//            deleteBackground();
         }
         return true;
-    }
-
-    private void deleteBackground() {
-
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    private int calculateBrightnessEstimate(Bitmap bitmap, int pixelSpacing) {
+        int R = 0;
+        int G = 0;
+        int B = 0;
+        int height = bitmap.getHeight();
+        int width = bitmap.getWidth();
+        int n = 0;
+        int[] pixels = new int[width * height];
+        bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+        for (int i = 0; i < pixels.length; i += pixelSpacing) {
+            int color = pixels[i];
+            R += Color.red(color);
+            G += Color.green(color);
+            B += Color.blue(color);
+            n++;
+        }
+//        return (R + B + G) / (n * 3);
+        return (int) (0.2126 * R + 0.7152 * G + 0.0722 * B);
+    }
+
+    private Bitmap adjustBrightness(Bitmap src, int value) {
+        int width = src.getWidth();
+        int height = src.getHeight();
+        // create output bitmap
+        Bitmap bmOut = Bitmap.createBitmap(width, height, src.getConfig());
+        // color information
+        int A, R, G, B;
+        int pixel;
+
+        // scan through all pixels
+        for (int x = 0; x < width; ++x) {
+            for (int y = 0; y < height; ++y) {
+                // get pixel color
+                pixel = src.getPixel(x, y);
+                A = Color.alpha(pixel);
+                R = Color.red(pixel);
+                G = Color.green(pixel);
+                B = Color.blue(pixel);
+
+                // increase/decrease each channel
+                R += value;
+                if (R > 255) {
+                    R = 255;
+                } else if (R < 0) {
+                    R = 0;
+                }
+
+                G += value;
+                if (G > 255) {
+                    G = 255;
+                } else if (G < 0) {
+                    G = 0;
+                }
+
+                B += value;
+                if (B > 255) {
+                    B = 255;
+                } else if (B < 0) {
+                    B = 0;
+                }
+
+                // apply new pixel color to output bitmap
+                bmOut.setPixel(x, y, Color.argb(A, R, G, B));
+            }
+        }
+
+        // return final image
+        return bmOut;
     }
 }

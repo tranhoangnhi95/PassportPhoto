@@ -41,7 +41,7 @@ public class MainFunctionAdapter extends RecyclerView.Adapter<MainFunctionAdapte
         holder.txtName.setEllipsize(TextUtils.TruncateAt.END);
         holder.txtName.setText(mainFunction.getName());
 
-        holder.imgImage.setImageResource(mainFunction.getImage());
+        holder.imgImage.setImageBitmap(mainFunction.getImage());
     }
 
     @Override

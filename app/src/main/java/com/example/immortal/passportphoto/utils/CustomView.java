@@ -383,5 +383,19 @@ public class CustomView extends View {
 
     }
 
+    public float getP1x() {
+        return p1x;
+    }
 
+    public float getP1y() {
+        return p1y;
+    }
+
+    public float getP2x() {
+        return p2x;
+    }
+
+    public float getP2y() {
+        return p2y;
+    }
 }

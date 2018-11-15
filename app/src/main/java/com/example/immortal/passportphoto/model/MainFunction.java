@@ -1,13 +1,15 @@
 package com.example.immortal.passportphoto.model;
 
+import android.graphics.Bitmap;
+
 public class MainFunction {
     private String name;
-    private int image;
+    private Bitmap image;
 
     public MainFunction() {
     }
 
-    public MainFunction(String name, int image) {
+    public MainFunction(String name, Bitmap image) {
         this.name = name;
         this.image = image;
     }
@@ -20,11 +22,11 @@ public class MainFunction {
         this.name = name;
     }
 
-    public int getImage() {
+    public Bitmap getImage() {
         return image;
     }
 
-    public void setImage(int image) {
+    public void setImage(Bitmap image) {
         this.image = image;
     }
 }

@@ -1,7 +1,9 @@
 package com.example.immortal.passportphoto.activity;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
@@ -37,6 +39,7 @@ import org.opencv.objdetect.CascadeClassifier;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 public class CropImageActivity extends AppCompatActivity {
     public static String TAG = "MainActivity";
@@ -49,13 +52,14 @@ public class CropImageActivity extends AppCompatActivity {
         }
     }
 
+    public static final float mm2pxConst = 3.7795275591f;
     private Toolbar tbCropImage;
     private Button btnSelectSize;
     private FrameLayout cvPhoto;
     private Bitmap bmImage, bmImageCpy;
     private CustomView customView;
     private String size;
-//    private ImageView imgTest;
+    //    private ImageView imgTest;
     private Mat mat;
 
     public static CascadeClassifier mCascadeClassifier;
@@ -128,21 +132,45 @@ public class CropImageActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.mn_Check){
-            Utils.bitmapToMat(customView.getBitmap(), mat);
-            if (customView.getSize().equals("2x3")){
-                Imgproc.resize(mat, mat, new Size(76, 113),0,0, Imgproc.INTER_AREA);
-                bmImageCpy = Bitmap.createBitmap(76, 113, bmImage.getConfig());
-            }else if (customView.getSize().equals("3x4")){
-                Imgproc.resize(mat, mat, new Size(113, 151),0,0, Imgproc.INTER_AREA);
-                bmImageCpy = Bitmap.createBitmap(113, 151, bmImage.getConfig());
-            }else {
-                Imgproc.resize(mat, mat, new Size(151, 227),0,0, Imgproc.INTER_AREA);
-                bmImageCpy = Bitmap.createBitmap(151, 227, bmImage.getConfig());
+        if (item.getItemId() == R.id.mn_Check) {
+            float p1x, p1y, p2x, p2y;
+            p1x = customView.getP1x() / (cvPhoto.getWidth() / bmImage.getWidth());
+            p1y = customView.getP1y() / (cvPhoto.getHeight() / bmImage.getHeight());
+            p2x = customView.getP2x() / (cvPhoto.getWidth() / bmImage.getWidth());
+            p2y = customView.getP2y() / (cvPhoto.getHeight() / bmImage.getHeight());
+            bmImageCpy = Bitmap.createBitmap(bmImage, (int) p1x, (int) p1y, (int) (p2x - p1x), (int) (p2y - p1y));
+            Utils.bitmapToMat(bmImageCpy, mat);
+            if (customView.getSize().equals("2x3")) {
+                Imgproc.resize(mat, mat, new Size(mmToPx(20), mmToPx(30)), 0, 0, Imgproc.INTER_AREA);
+                bmImageCpy = Bitmap.createBitmap(mmToPx(20), mmToPx(30), bmImage.getConfig());
+            } else if (customView.getSize().equals("3x4")) {
+                Imgproc.resize(mat, mat, new Size(mmToPx(30), mmToPx(40)), 0, 0, Imgproc.INTER_AREA);
+//                Imgproc.resize(mat, mat, new Size(354, 472),0,0, Imgproc.INTER_AREA);
+                bmImageCpy = Bitmap.createBitmap(mmToPx(30), mmToPx(40), bmImage.getConfig());
+            } else {
+                Imgproc.resize(mat, mat, new Size(mmToPx(40), mmToPx(60)), 0, 0, Imgproc.INTER_AREA);
+                bmImageCpy = Bitmap.createBitmap(mmToPx(40), mmToPx(60), bmImage.getConfig());
             }
 
             Utils.matToBitmap(mat, bmImageCpy);
 //            imgTest.setImageBitmap(bmImageCpy);
+            try {
+                //Write file
+                String filename = "bitmap.png";
+                FileOutputStream stream = this.openFileOutput(filename, Context.MODE_PRIVATE);
+                bmImageCpy.compress(Bitmap.CompressFormat.PNG, 100, stream);
+
+                //Cleanup
+                stream.close();
+                bmImageCpy.recycle();
+
+                //Pop intent
+                Intent iToImagePrg = new Intent(CropImageActivity.this, ImageProcessingActivity.class);
+                iToImagePrg.putExtra("image", filename);
+                startActivity(iToImagePrg);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return true;
     }
@@ -218,15 +246,16 @@ public class CropImageActivity extends AppCompatActivity {
 
                 dialogInterface.dismiss();
                 customView.setSize(size);
-//                Point point1, point2;
-//                point1 = new Point(100.0f, 109.44f);
-//                point2 = new Point(213.39f, 222.83f);
-//                customView.drawFaceRect(new Rect(point1, point2));
                 Toast.makeText(CropImageActivity.this, size, Toast.LENGTH_SHORT).show();
             }
         });
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    private int mmToPx(int mm) {
+        double pixel = mm * mm2pxConst;
+        return (int) pixel;
     }
 }

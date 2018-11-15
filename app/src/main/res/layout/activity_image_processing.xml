@@ -10,31 +10,51 @@
     <include
         android:id="@+id/tb_ImageProcessing"
         layout="@layout/layout_toolbar"></include>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="90"
-        android:background="@color/my_lighter_primary">
+        android:layout_weight="85"
+        android:background="@color/my_lightest_primary">
 
         <ImageView
             android:id="@+id/img_Photo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitCenter"
-            android:src="@drawable/images" />
+            android:scaleType="center" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_Action"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="?android:attr/windowTitleSize"
             android:layout_gravity="bottom"
-            android:background="#7ea3a2ad"></android.support.v7.widget.RecyclerView>
+            android:background="#9da5af"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txt_Value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|bottom"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="@color/my_secondary"
+                android:textSize="15sp" />
+            <SeekBar
+                android:id="@+id/sb_Value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:max="100"
+                android:progress="0"
+                android:secondaryProgress="0" />
+        </FrameLayout>
     </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="10"
+        android:layout_weight="15"
         android:background="@color/my_primary">
 
         <android.support.v7.widget.RecyclerView
