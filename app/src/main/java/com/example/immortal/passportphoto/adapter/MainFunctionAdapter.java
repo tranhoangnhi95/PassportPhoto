@@ -23,8 +23,6 @@ public class MainFunctionAdapter extends RecyclerView.Adapter<MainFunctionAdapte
     public ArrayList<MainFunction> objects;
     public SeekBar sbBrightness, sbContrast, sbSaturation, sbTemperature;
     public TextView txtValue;
-    public ImageView imgMyPhoto;
-
     public MainFunctionAdapter(Context context, int resource, ArrayList<MainFunction> objects, SeekBar sbBrightness,
                                SeekBar sbContrast, SeekBar sbSaturation, SeekBar sbTemperature, TextView txtValue) {
         this.context = context;
@@ -91,6 +89,18 @@ public class MainFunctionAdapter extends RecyclerView.Adapter<MainFunctionAdapte
                         sbTemperature.setVisibility(View.VISIBLE);
                         txtValue.setText(String.valueOf(sbTemperature.getProgress() - 45));
                         txtValue.setVisibility(View.VISIBLE);
+                        break;
+                    case "Tự động":
+                        sbBrightness.setProgress(110);
+                        sbContrast.setProgress(110);
+                        sbSaturation.setProgress(110);
+                        sbTemperature.setProgress(45);
+                        sbBrightness.setVisibility(View.INVISIBLE);
+                        txtValue.setText(String.valueOf(0));
+                        sbContrast.setVisibility(View.INVISIBLE);
+                        sbSaturation.setVisibility(View.INVISIBLE);
+                        sbTemperature.setVisibility(View.INVISIBLE);
+                        txtValue.setVisibility(View.INVISIBLE);
                         break;
 
                     default:

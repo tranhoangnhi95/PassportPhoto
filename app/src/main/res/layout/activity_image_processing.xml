@@ -99,6 +99,9 @@
         android:background="@color/my_primary">
 
         <android.support.v7.widget.RecyclerView
+            android:clickable="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:id="@+id/rv_MainFunction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -31,6 +31,7 @@ import com.example.immortal.passportphoto.utils.MyConstant;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
@@ -39,6 +40,7 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 
@@ -100,7 +102,7 @@ public class ImageProcessingActivity extends AppCompatActivity {
         sbTemperature = findViewById(R.id.sb_Temperature);
         changeSeekBarColor();
         setSupportActionBar(tbImageProc);
-        setTitle("Trở về");
+        setTitle("Chỉnh sủa");
         loadingActionBar();
         brightness = contrast = saturation = temperature = 0;
         String filename = getIntent().getStringExtra("image");
@@ -121,25 +123,22 @@ public class ImageProcessingActivity extends AppCompatActivity {
             MainFunction mainFunction1 = new MainFunction("Đặt lại", this.imgBitmap);
             mainFunctions.add(mainFunction1);
 
-            MainFunction mainFunction2 = new MainFunction("Tự động", this.imgBitmap);
+            MainFunction mainFunction2 = new MainFunction("Tự động", applyAdjust(imgBitmap, 10, 10, 10, 0));
             mainFunctions.add(mainFunction2);
 
-            MainFunction mainFunction3 = new MainFunction("Sáng tối", this.imgBitmap);
+            MainFunction mainFunction3 = new MainFunction("Sáng tối", adjustBrightness(imgBitmap,10));
             mainFunctions.add(mainFunction3);
 
-            MainFunction mainFunction4 = new MainFunction("Tương phản", this.imgBitmap);
+            MainFunction mainFunction4 = new MainFunction("Tương phản", adjustContrast(imgBitmap, 10));
             mainFunctions.add(mainFunction4);
 
-            MainFunction mainFunction5 = new MainFunction("Bão hòa", this.imgBitmap);
+            MainFunction mainFunction5 = new MainFunction("Bão hòa", adjustSaturation(imgBitmap, 10));
             mainFunctions.add(mainFunction5);
 
-            MainFunction mainFunction6 = new MainFunction("Nhiệt độ", this.imgBitmap);
+            MainFunction mainFunction6 = new MainFunction("Nhiệt độ", adjustTemperature(imgBitmap, 5));
             mainFunctions.add(mainFunction6);
 
         }
-//        sbBrightness.setProgress(brightness);
-//        sbContrast.setProgress(contrast);
-//        Log.d("Today", "Brightness: ------ " + brightness + " ------- contrast: -------- " + contrast);
         mainFunctionAdapter = new MainFunctionAdapter(this, R.layout.layout_mainfunction_item, mainFunctions, sbBrightness, sbContrast, sbSaturation, sbTemperature, txtValue);
         rvMainFunction.setHasFixedSize(true);
         rvMainFunction.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -153,7 +152,6 @@ public class ImageProcessingActivity extends AppCompatActivity {
     }
 
     private void control() {
-//        addrectangle();
         tbImageProc.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -164,13 +162,11 @@ public class ImageProcessingActivity extends AppCompatActivity {
         sbBrightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                txtValue.setText(String.valueOf(i - 100));
-                myImageBitmap = adjustContrast(imgBitmap, contrast);
-                myImageBitmap = adjustBrightness(myImageBitmap, i - 100);
 
-//                imgMyPhoto.setImageBitmap(adjustBrightness(myImageBitmap, i - 100));
-                imgMyPhoto.setImageBitmap(myImageBitmap);
                 brightness = i - 100;
+                myImageBitmap = applyAdjust(imgBitmap, brightness, contrast, saturation, temperature);
+                imgMyPhoto.setImageBitmap(myImageBitmap);
+                txtValue.setText(String.valueOf(brightness));
             }
 
             @Override
@@ -180,7 +176,6 @@ public class ImageProcessingActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-//                Toast.makeText(getApplicationContext(), "Seekbar progess:" + progressChanged, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -188,13 +183,10 @@ public class ImageProcessingActivity extends AppCompatActivity {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                myImageBitmap = adjustBrightness(imgBitmap, brightness);
-                myImageBitmap = adjustContrast(myImageBitmap, i - 100);
-
-//                imgMyPhoto.setImageBitmap(adjustContrast(myImageBitmap, i - 100));
-                imgMyPhoto.setImageBitmap(myImageBitmap);
-                txtValue.setText(String.valueOf(i - 100));
                 contrast = i - 100;
+                myImageBitmap = applyAdjust(imgBitmap, brightness, contrast, saturation, temperature);
+                imgMyPhoto.setImageBitmap(myImageBitmap);
+                txtValue.setText(String.valueOf(contrast));
 
             }
 
@@ -212,10 +204,10 @@ public class ImageProcessingActivity extends AppCompatActivity {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                txtValue.setText(String.valueOf(i - 100));
-                imgMyPhoto.setImageBitmap(adjustSaturation(imgBitmap, i - 100));
-                txtValue.setText(String.valueOf(i - 100));
-                contrast = i - 100;
+                saturation = i - 100;
+                myImageBitmap = applyAdjust(imgBitmap, brightness, contrast, saturation, temperature);
+                imgMyPhoto.setImageBitmap(myImageBitmap);
+                txtValue.setText(String.valueOf(saturation));
             }
 
             @Override
@@ -231,10 +223,10 @@ public class ImageProcessingActivity extends AppCompatActivity {
         sbTemperature.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                txtValue.setText(String.valueOf(i - 45));
-                imgMyPhoto.setImageBitmap(adjustTemperature(imgBitmap, i - 50));
-                txtValue.setText(String.valueOf(i - 45));
-                contrast = i - 45;
+                temperature = i - 45;
+                myImageBitmap = applyAdjust(imgBitmap, brightness, contrast, saturation, temperature);
+                imgMyPhoto.setImageBitmap(myImageBitmap);
+                txtValue.setText(String.valueOf(temperature));
             }
 
             @Override
@@ -329,8 +321,9 @@ public class ImageProcessingActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.mn_Check) {
-            Intent iToRatationImage = new Intent(ImageProcessingActivity.this, RotationImageActivity.class);
-            startActivity(iToRatationImage);
+            Intent iToSaveImage = new Intent(ImageProcessingActivity.this, SaveImageActivity.class);
+            iToSaveImage.putExtra("image", bitmapToByteArray(myImageBitmap));
+            startActivity(iToSaveImage);
         }
         return true;
     }
@@ -547,6 +540,15 @@ public class ImageProcessingActivity extends AppCompatActivity {
         return result;
     }
 
+    private Bitmap applyAdjust(Bitmap src, int brightness, int contrast, int saturation, int temperature) {
+        Bitmap result;
+        result = adjustBrightness(src, brightness);
+        result = adjustContrast(result, contrast);
+        result = adjustSaturation(result, saturation);
+        result = adjustTemperature(result, temperature);
+        return result;
+    }
+
     private void changeSeekBarColor() {
         sbBrightness.getProgressDrawable().setColorFilter(getResources().getColor(R.color.my_lighter_primary), PorterDuff.Mode.MULTIPLY);
         sbBrightness.getThumb().setColorFilter(getResources().getColor(R.color.my_lighter_primary), PorterDuff.Mode.SRC_ATOP);
@@ -561,5 +563,12 @@ public class ImageProcessingActivity extends AppCompatActivity {
         sbTemperature.getThumb().setColorFilter(getResources().getColor(R.color.my_lighter_primary), PorterDuff.Mode.SRC_ATOP);
     }
 
+    private byte[] bitmapToByteArray(Bitmap src){
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        src.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+
+        return byteArray;
+    }
 
 }

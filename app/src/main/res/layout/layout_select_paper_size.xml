@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="5dp"
+        android:layout_weight="30"
+        android:fontFamily="cursive"
+        android:gravity="center"
+        android:text="Chọn khổ giấy in"
+        android:textAllCaps="true"
+        android:textColor="@color/my_primary"
+        android:textSize="20sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:layout_weight="70"
+        android:gravity="center|left"
+        android:orientation="horizontal">
+
+        <RadioGroup
+            android:id="@+id/rg_PaperSelect"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="left|center">
+
+            <RadioButton
+                android:id="@+id/btn_Cp1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/custom_radio_button"
+                android:checked="true"
+                android:paddingLeft="5dp"
+                android:text="Cp1: 9.8x15.2 cm"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/btn_Cp2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:button="@drawable/custom_radio_button"
+                android:paddingLeft="5dp"
+                android:text="Cp2: 12.7x17.8 cm"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/btn_Cp3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:button="@drawable/custom_radio_button"
+                android:paddingLeft="5dp"
+                android:text="Cp3: 15.2x21 cm"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/btn_Cp4Cp5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:button="@drawable/custom_radio_button"
+                android:paddingLeft="5dp"
+                android:text="Cp4/Cp5: 20x25.4 cm"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/btn_Cp6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:button="@drawable/custom_radio_button"
+                android:paddingLeft="5dp"
+                android:text="Cp6: 19.8x30.5 cm"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/btn_Cp10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:button="@drawable/custom_radio_button"
+                android:paddingLeft="5dp"
+                android:text="p10: 25.4x37.3 cm"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/btn_Cp12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:button="@drawable/custom_radio_button"
+                android:paddingLeft="5dp"
+                android:text="Cp12: 30.5x44.4 cm"
+                android:textSize="20sp" />
+
+        </RadioGroup>
+    </LinearLayout>
+</LinearLayout>

@@ -25,7 +25,8 @@
         <activity android:name=".activity.ImageProcessingActivity" />
         <activity android:name=".activity.NewImageActivity" />
         <activity android:name=".activity.RotationImageActivity" />
-        <activity android:name=".activity.CropImageActivity"></activity>
+        <activity android:name=".activity.CropImageActivity" />
+        <activity android:name=".activity.SaveImageActivity"></activity>
     </application>
 
 </manifest>
