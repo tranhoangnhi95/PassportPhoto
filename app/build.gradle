@@ -35,4 +35,7 @@ dependencies {
 
     //rulerview
     implementation 'com.github.dwfox:DWRulerView:1.1.0'
+
+    //horizontal listview
+    implementation 'org.lucasr.twowayview:twowayview:0.1.4'
 }

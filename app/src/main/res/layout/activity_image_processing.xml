@@ -21,7 +21,8 @@
             android:id="@+id/img_Photo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="center" />
+            android:layout_margin="100dp"
+            android:scaleType="fitCenter" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -37,17 +38,57 @@
                 android:layout_gravity="center|bottom"
                 android:gravity="center"
                 android:text="0"
+                android:visibility="invisible"
                 android:textColor="@color/my_secondary"
                 android:textSize="15sp" />
+
             <SeekBar
-                android:id="@+id/sb_Value"
+                android:id="@+id/sb_Brightness"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="10dp"
-                android:max="100"
-                android:progress="0"
-                android:secondaryProgress="0" />
+                android:max="200"
+                android:min="0"
+                android:progress="100"
+                android:secondaryProgress="0"
+                android:visibility="invisible" />
+
+            <SeekBar
+                android:id="@+id/sb_Contrast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:max="200"
+                android:min="0"
+                android:progress="100"
+                android:secondaryProgress="0"
+                android:visibility="invisible" />
+
+            <SeekBar
+                android:id="@+id/sb_Saturation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:max="200"
+                android:min="0"
+                android:progress="100"
+                android:secondaryProgress="0"
+                android:visibility="invisible" />
+
+            <SeekBar
+                android:id="@+id/sb_Temperature"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:max="90"
+                android:min="0"
+                android:progress="45"
+                android:secondaryProgress="0"
+                android:visibility="invisible" />
         </FrameLayout>
     </FrameLayout>
 
