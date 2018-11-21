@@ -15,20 +15,12 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.example.immortal.passportphoto.R;
-import com.example.immortal.passportphoto.activity.CropImageActivity;
-import com.example.immortal.passportphoto.asynctask.FaceRecognizeAsyncTask;
+import com.example.immortal.passportphoto.asynctask.EyesRecognizeAsyncTask;
 
 import org.opencv.android.OpenCVLoader;
-import org.opencv.android.Utils;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfRect;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
-import org.opencv.objdetect.CascadeClassifier;
 
-import java.io.File;
 import java.util.concurrent.ExecutionException;
 
 public class CustomView extends View {
@@ -46,14 +38,15 @@ public class CustomView extends View {
     private static final float mm2pxConst = 3.779528f;
     private String photoSize;
     private float p1x, p1y, p2x, p2y;
-    private Rect face;
+    //    private Rect face;
+    private Point point1, point2;
     private String size;
     private Canvas canvas;
     private float currentX, currentY, deltaX, deltaY, percent;
     private Paint paint, paint2;
     private Context context;
 
-    private FaceRecognizeAsyncTask faceRecognizeAsyncTask;
+    private EyesRecognizeAsyncTask eyesRecognizeAsyncTask;
 
     private boolean moveRect, scaleRect, stopWorking;
     @Nullable
@@ -79,7 +72,7 @@ public class CustomView extends View {
         paint.setStrokeCap(Paint.Cap.ROUND);
         paint.setStyle(Paint.Style.STROKE);
         paint.setColor(getResources().getColor(R.color.blue_blur));
-        faceRecognizeAsyncTask = new FaceRecognizeAsyncTask(context);
+        eyesRecognizeAsyncTask = new EyesRecognizeAsyncTask(context);
         float[] intervals = new float[]{50.0f, 20.0f};
         float phase = 0;
 
@@ -165,8 +158,8 @@ public class CustomView extends View {
 
             } else {
                 Path baseLine = new Path();
-                baseLine.moveTo(p1x, ((p2y - p1y) * 80f / 100) + p1y);
-                baseLine.lineTo(p2x, ((p2y - p1y) * 80f / 100) + p1y);
+                baseLine.moveTo(p1x, ((p2y - p1y) * 76.7f / 100) + p1y);
+                baseLine.lineTo(p2x, ((p2y - p1y) * 76.7f / 100) + p1y);
                 canvas.drawPath(baseLine, paint);
 
                 baseLine.moveTo(p1x, ((p2y - p1y) * 10f / 100) + p1y);
@@ -271,33 +264,31 @@ public class CustomView extends View {
     }
 
 
-    public void drawFaceRect(Rect rect) {
-        float tlx, tly, brx, bry;
-        tlx = (float) rect.tl().x;
-        tly = (float) rect.tl().y;
-        brx = (float) rect.br().x;
-        bry = (float) rect.br().y;
+    public void drawFaceRect(Point point1, Point point2) {
+        float x1, y1, x2, y2;
+        x1 = (float) point1.x;
+        y1 = (float) point1.y;
+        x2 = (float) point2.x;
+        y2 = (float) point2.y;
         this.scaleRect = true;
 
         if (size.equals("4x6")) {
-//            p1x = tlx - (brx - tlx) * 5f / 90f;
-            p1x = tlx - (bry - tly) * 5f / 90f;
-            p1y = tly - (bry - tly) / 6f;
-//            p2x = brx + ((brx - tlx) * 5f / 90f);
-            p2x = brx + ((bry - tly) * 5f / 90f);
-            p2y = bry + (bry - tly) / 2f;
+            p1x = x1 - (x2 - x1) * 32.5f / 35f;
+            p1y = y1 - (x2 - x1) * 3 * 40f / 70f;
+            p2x = x2 + (x2 - x1) * 32.5f / 35f;
+            p2y = y1 + (x2 - x1) * 3 * 60f / 70f;
         } else if (size.equals("3x4")) {
 
-            p1x = tlx;
-            p1y = tly - (bry - tly) * 6.25f / 75f;
-            p2x = brx;
-            p2y = bry + (bry - tly) * 18.75f / 75f;
+            p1x = x1 - (x2 - x1) * 33.3f / 33.4f;
+            p1y = y1 - (x2 - x1) * 43.75f / 25f;
+            p2x = x2 + (x2 - x1) * 33.3f / 33.4f;
+            p2y = y1 + (x2 - x1) * 56.25f / 25f;
 
         } else {
-            p1x = tlx;
-            p1y = tly - (bry - tly) * 10f / 70f;
-            p2x = brx;
-            p2y = bry + (bry - tly) * 10f / 70f;
+            p1x = x1 - (x2 - x1) * 30f / 40f;
+            p1y = y1 - (x2 - x1) * 3 * 43.35f / 80f;
+            p2x = x2 + (x2 - x1) * 30f / 40f;
+            p2y = y1 + (x2 - x1) * 3 * 56.65f / 80f;
         }
 
         invalidate();
@@ -333,8 +324,8 @@ public class CustomView extends View {
         this.size = size;
         this.scaleRect = true;
 
-        if (face != null) {
-            this.drawFaceRect(face);
+        if (point1 != null && point2 != null) {
+            this.drawFaceRect(point1, point2);
         }
         invalidate();
     }
@@ -351,34 +342,30 @@ public class CustomView extends View {
     public void setBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
 
-        faceRecognizeAsyncTask.execute(bitmap);
+        eyesRecognizeAsyncTask.execute(bitmap);
         try {
-            this.face = faceRecognizeAsyncTask.get();
+            this.point1 = eyesRecognizeAsyncTask.get()[0];
+            this.point2 = eyesRecognizeAsyncTask.get()[1];
         } catch (InterruptedException e) {
             e.printStackTrace();
-            Point tl, br;
             if (bitmap.getWidth() <= bitmap.getHeight()) {
-                tl = new Point(bitmap.getWidth() / 4, bitmap.getWidth() / 4);
-                br = new Point(3 * bitmap.getWidth() / 4, 3 * bitmap.getWidth() / 4);
+                point1 = new Point(bitmap.getWidth() / 4, bitmap.getWidth() / 4);
+                point2 = new Point(3 * bitmap.getWidth() / 4, bitmap.getWidth() / 4);
             } else {
-                tl = new Point(bitmap.getHeight() / 4, bitmap.getHeight() / 4);
-                br = new Point(3 * bitmap.getHeight() / 4, 3 * bitmap.getHeight() / 4);
+                point1 = new Point(bitmap.getHeight() / 4, bitmap.getHeight() / 4);
+                point2 = new Point(3 * bitmap.getHeight() / 4, bitmap.getHeight() / 4);
             }
-            this.face = new Rect(tl, br);
-
         } catch (ExecutionException e) {
-            Point tl, br;
             if (bitmap.getWidth() <= bitmap.getHeight()) {
-                tl = new Point(bitmap.getWidth() / 4, bitmap.getWidth() / 4);
-                br = new Point(3 * bitmap.getWidth() / 4, 3 * bitmap.getWidth() / 4);
+                point1 = new Point(bitmap.getWidth() / 4, bitmap.getWidth() / 4);
+                point2 = new Point(3 * bitmap.getWidth() / 4, bitmap.getWidth() / 4);
             } else {
-                tl = new Point(bitmap.getHeight() / 4, bitmap.getHeight() / 4);
-                br = new Point(3 * bitmap.getHeight() / 4, 3 * bitmap.getHeight() / 4);
+                point1 = new Point(bitmap.getHeight() / 4, bitmap.getHeight() / 4);
+                point2 = new Point(3 * bitmap.getHeight() / 4, bitmap.getHeight() / 4);
             }
-            this.face = new Rect(tl, br);
             e.printStackTrace();
         }
-        this.drawFaceRect(this.face);
+        this.drawFaceRect(this.point1, this.point2);
         invalidate();
 
     }

@@ -78,7 +78,7 @@ public class CropImageActivity extends AppCompatActivity {
         btnSelectSize = findViewById(R.id.btn_SelectImageSize);
         cvPhoto = findViewById(R.id.cv_CIPhoto);
         mat = new Mat();
-        mCascadeClassifier = MyConstant.Cascade_Setting(this);
+        mCascadeClassifier = MyConstant.Cascade_Setting_Eye(this);
 
 //        imgTest = findViewById(R.id.img_Test);
         setSupportActionBar(tbCropImage);

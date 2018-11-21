@@ -45,6 +45,7 @@
             android:tooltipText="Lật" />
 
         <Button
+            android:enabled="false"
             android:id="@+id/btn_RIAutoAdjustment"
             android:layout_width="0dp"
             android:layout_height="match_parent"

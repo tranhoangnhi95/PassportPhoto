@@ -21,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.example.immortal.passportphoto.R;
+import com.example.immortal.passportphoto.asynctask.CheckAutoEnableAsyncTask;
 import com.example.immortal.passportphoto.asynctask.MyAsyncTask;
 import com.example.immortal.passportphoto.utils.MyConstant;
 import com.tistory.dwfox.dwrulerviewlibrary.utils.DWUtils;
@@ -45,6 +46,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.concurrent.ExecutionException;
 
 public class RotationImageActivity extends AppCompatActivity implements View.OnClickListener {
     public static String TAG = "MainActivity";
@@ -69,8 +71,10 @@ public class RotationImageActivity extends AppCompatActivity implements View.OnC
     private static final float LINE_RULER_MULTIPLE_SIZE = 1.5f;
     private float angle = 0.0f;
     private int currentAngle = 0;
-    private CascadeClassifier mCascadeClassifier;
+    private org.opencv.core.Point point1, point2;
+    public static CascadeClassifier mCascadeClassifier;
 //    private int orientation = 1;
+    private CheckAutoEnableAsyncTask checkAutoEnableAsyncTask;
 
     public Bitmap imgBitmap, imgBitmapCpy;
     public static String filename = "filename";
@@ -101,13 +105,13 @@ public class RotationImageActivity extends AppCompatActivity implements View.OnC
                 return false;
             }
         });
+        mCascadeClassifier = MyConstant.Cascade_Setting_Eye(this);
         btnFlip = findViewById(R.id.btn_RIFlip);
         btnRotate = findViewById(R.id.btn_RIRotate);
         btnAutoAdjustment = findViewById(R.id.btn_RIAutoAdjustment);
         setSupportActionBar(tbRotationImage);
         setTitle("Điều chỉnh độ nghiêng");
         loadingActionbar();
-
         Intent iReceive = getIntent();
         Uri imageUri = Uri.parse(iReceive.getStringExtra("img"));
         try {
@@ -117,6 +121,16 @@ public class RotationImageActivity extends AppCompatActivity implements View.OnC
             imgPhoto.setImageBitmap(imgBitmap);
             Log.d("uri", imageUri.toString());
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        checkAutoEnableAsyncTask = new CheckAutoEnableAsyncTask(this, btnAutoAdjustment);
+        checkAutoEnableAsyncTask.execute(imgBitmap);
+        try {
+            point1 = checkAutoEnableAsyncTask.get()[0];
+            point2 = checkAutoEnableAsyncTask.get()[1];
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
             e.printStackTrace();
         }
     }
@@ -148,9 +162,9 @@ public class RotationImageActivity extends AppCompatActivity implements View.OnC
                         i, i1, MAX_VALUE, MIN_VALUE, svRuler.getViewMultipleSize());
                 float value = newAngle - currentAngle;
                 currentAngle = newAngle;
-                if (angle + value >= 360.0f){
+                if (angle + value >= 360.0f) {
                     angle = angle + value - 360.0f;
-                }else {
+                } else {
                     angle += value;
                 }
 //                imgBitmapCpy = rotateBitmap(imgBitmapCpy, (float) DWUtils.getValueAndScrollItemToCenter(svRuler.getScrollView(),
@@ -210,14 +224,14 @@ public class RotationImageActivity extends AppCompatActivity implements View.OnC
                 flipImage();
                 break;
             case R.id.btn_RIAutoAdjustment:
-                autoAdjustment();
+                autoAdjustment(point1, point2);
                 break;
         }
     }
 
     private void rotateImage() {
         angle = angle + 90.0f;
-        if (angle >= 360.0f){
+        if (angle >= 360.0f) {
             angle = angle - 360.0f;
         }
         imgBitmapCpy = rotateBitmap(imgBitmap, angle);
@@ -229,7 +243,7 @@ public class RotationImageActivity extends AppCompatActivity implements View.OnC
         imgPhoto.setImageBitmap(imgBitmapCpy);
     }
 
-    private double getAngle(org.opencv.core.Point firstPoint, org.opencv.core.Point secondPoint){
+    private double getAngle(org.opencv.core.Point firstPoint, org.opencv.core.Point secondPoint) {
         double dx = firstPoint.x - secondPoint.x;
         double dy = firstPoint.y - secondPoint.y;
         double inRads = Math.atan2(dy, dx);
@@ -241,25 +255,16 @@ public class RotationImageActivity extends AppCompatActivity implements View.OnC
         return Math.toDegrees(inRads);
     }
 
-    private void autoAdjustment(){
-        mCascadeClassifier = MyConstant.Cascade_Setting_Eye(this);
-        Mat myImageMat = new Mat();
-        MatOfRect eyes = new MatOfRect();
-        Utils.bitmapToMat(imgBitmap, myImageMat);
-        Imgproc.cvtColor(myImageMat,myImageMat, Imgproc.COLOR_RGBA2GRAY);
-        mCascadeClassifier.detectMultiScale(myImageMat, eyes, 1.1, 10, 10, new Size(50, 50), new Size());
-        Rect[] eyesArray = eyes.toArray();
+    private void autoAdjustment(org.opencv.core.Point p1, org.opencv.core.Point p2) {
+
 //        for (int i = 0; i < eyesArray.length; i++)
 //            Imgproc.rectangle(myImageMat, eyesArray[i].tl(), eyesArray[i].br(), new Scalar(0, 255, 0, 255), 3);
 //        Utils.matToBitmap(myImageMat, imgBitmap);
 //        imgPhoto.setImageBitmap(imgBitmap);
-        org.opencv.core.Point first, second;
-        first = new org.opencv.core.Point(eyesArray[0].tl().x + (eyesArray[0].width/2), eyesArray[0].tl().y + (eyesArray[0].height/2));
-        second =new org.opencv.core.Point(eyesArray[1].tl().x + (eyesArray[1].width/2), eyesArray[1].tl().y + (eyesArray[1].height/2));
 //        double angle1 = getAngle(eyesArray[0].tl(), eyesArray[1].tl());
-        double angle1 = 360 - getAngle(first, second);
+        double angle1 = 360 - getAngle(p1, p2);
         Log.d("Angle", "" + String.valueOf(angle1));
-        imgBitmapCpy = rotateBitmap(imgBitmapCpy, (float) - angle1 );
+        imgBitmapCpy = rotateBitmap(imgBitmapCpy, (float) -angle1);
         imgPhoto.setImageBitmap(imgBitmapCpy);
     }
 
@@ -267,7 +272,7 @@ public class RotationImageActivity extends AppCompatActivity implements View.OnC
     protected void onResume() {
         super.onResume();
         Log.d("Test", String.valueOf(imgBitmap == null));
-        if (imgBitmap == null || imgBitmapCpy == null ){
+        if (imgBitmap == null || imgBitmapCpy == null) {
             try {
                 FileInputStream is = this.openFileInput(RotationImageActivity.filename);
                 imgBitmap = BitmapFactory.decodeStream(is);
