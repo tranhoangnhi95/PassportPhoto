@@ -66,6 +66,7 @@ public class CheckAutoEnableAsyncTask extends AsyncTask<Bitmap, Void, org.opencv
                 points[1] = new org.opencv.core.Point(3 * bitmaps[0].getHeight() / 8, bitmaps[0].getHeight() / 4);
             }
         }
+        Log.d("Today", "eye = " + String.valueOf(eyesArray.length));
         return points;
     }
 

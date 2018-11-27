@@ -26,7 +26,8 @@
         <activity android:name=".activity.NewImageActivity" />
         <activity android:name=".activity.RotationImageActivity" />
         <activity android:name=".activity.CropImageActivity" />
-        <activity android:name=".activity.SaveImageActivity"></activity>
+        <activity android:name=".activity.SaveImageActivity" />
+        <activity android:name=".activity.ChangeBackgroundActivity"></activity>
     </application>
 
 </manifest>

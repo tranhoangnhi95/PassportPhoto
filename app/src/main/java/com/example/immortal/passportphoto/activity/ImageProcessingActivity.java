@@ -321,9 +321,9 @@ public class ImageProcessingActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.mn_Check) {
-            Intent iToSaveImage = new Intent(ImageProcessingActivity.this, SaveImageActivity.class);
-            iToSaveImage.putExtra("image", bitmapToByteArray(myImageBitmap));
-            startActivity(iToSaveImage);
+            Intent iToChangebackground = new Intent(ImageProcessingActivity.this, ChangeBackgroundActivity.class);
+            iToChangebackground.putExtra("image", bitmapToByteArray(myImageBitmap));
+            startActivity(iToChangebackground);
         }
         return true;
     }

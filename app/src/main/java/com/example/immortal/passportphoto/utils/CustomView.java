@@ -20,6 +20,7 @@ import com.example.immortal.passportphoto.asynctask.EyesRecognizeAsyncTask;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.video.BackgroundSubtractorMOG2;
 
 import java.util.concurrent.ExecutionException;
 
@@ -45,6 +46,7 @@ public class CustomView extends View {
     private float currentX, currentY, deltaX, deltaY, percent;
     private Paint paint, paint2;
     private Context context;
+
 
     private EyesRecognizeAsyncTask eyesRecognizeAsyncTask;
 
@@ -349,19 +351,13 @@ public class CustomView extends View {
         } catch (InterruptedException e) {
             e.printStackTrace();
             if (bitmap.getWidth() <= bitmap.getHeight()) {
-                point1 = new Point(bitmap.getWidth() / 4, bitmap.getWidth() / 4);
-                point2 = new Point(3 * bitmap.getWidth() / 4, bitmap.getWidth() / 4);
-            } else {
-                point1 = new Point(bitmap.getHeight() / 4, bitmap.getHeight() / 4);
-                point2 = new Point(3 * bitmap.getHeight() / 4, bitmap.getHeight() / 4);
+                point1 = new org.opencv.core.Point(bitmap.getWidth() / 4, bitmap.getHeight() / 2);
+                point2 = new org.opencv.core.Point(3 * bitmap.getWidth() / 8, bitmap.getHeight() / 2);
             }
         } catch (ExecutionException e) {
             if (bitmap.getWidth() <= bitmap.getHeight()) {
-                point1 = new Point(bitmap.getWidth() / 4, bitmap.getWidth() / 4);
-                point2 = new Point(3 * bitmap.getWidth() / 4, bitmap.getWidth() / 4);
-            } else {
-                point1 = new Point(bitmap.getHeight() / 4, bitmap.getHeight() / 4);
-                point2 = new Point(3 * bitmap.getHeight() / 4, bitmap.getHeight() / 4);
+                point1 = new org.opencv.core.Point(bitmap.getWidth() / 4, bitmap.getHeight() / 2);
+                point2 = new org.opencv.core.Point(3 * bitmap.getWidth() / 8, bitmap.getHeight() / 2);
             }
             e.printStackTrace();
         }

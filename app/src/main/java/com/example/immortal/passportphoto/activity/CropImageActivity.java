@@ -25,6 +25,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.immortal.passportphoto.R;
+import com.example.immortal.passportphoto.asynctask.EyesRecognizeAsyncTask;
 import com.example.immortal.passportphoto.utils.CustomView;
 import com.example.immortal.passportphoto.utils.MyConstant;
 
@@ -40,6 +41,7 @@ import org.opencv.objdetect.CascadeClassifier;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.concurrent.ExecutionException;
 
 public class CropImageActivity extends AppCompatActivity {
     public static String TAG = "MainActivity";
@@ -59,6 +61,7 @@ public class CropImageActivity extends AppCompatActivity {
     private Bitmap bmImage, bmImageCpy;
     private CustomView customView;
     private String size;
+    private Point point1, point2;
     //    private ImageView imgTest;
     private Mat mat;
 
@@ -79,7 +82,6 @@ public class CropImageActivity extends AppCompatActivity {
         cvPhoto = findViewById(R.id.cv_CIPhoto);
         mat = new Mat();
         mCascadeClassifier = MyConstant.Cascade_Setting_Eye(this);
-
 //        imgTest = findViewById(R.id.img_Test);
         setSupportActionBar(tbCropImage);
         setTitle("Cắt ảnh");
@@ -96,7 +98,6 @@ public class CropImageActivity extends AppCompatActivity {
 
         customView = new CustomView(this);
 
-
         ViewTreeObserver observer = cvPhoto.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
@@ -110,7 +111,6 @@ public class CropImageActivity extends AppCompatActivity {
                 cvPhoto.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
-
         customView.setSize(size);
         cvPhoto.addView(customView);
 
@@ -179,36 +179,10 @@ public class CropImageActivity extends AppCompatActivity {
         btnSelectSize.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                faceRecognize(bmImage);
                 sizeSelect();
-//                imgTest.setImageBitmap(customView.getBitmap());
             }
         });
 
-    }
-
-
-    private void faceRecognize(Bitmap imgBitmap) {
-//        File x = MyConstant.Cascade_Setting(this);
-//        mCascadeClassifier = new CascadeClassifier(x.getAbsolutePath());
-//        Mat myImageMat = new Mat();
-//        MatOfRect face = new MatOfRect();
-//        Utils.bitmapToMat(imgBitmap, myImageMat);
-//        Imgproc.cvtColor(myImageMat,myImageMat, Imgproc.COLOR_RGBA2GRAY);
-//        mCascadeClassifier.detectMultiScale(myImageMat, face, 1.1, 5, 10, new Size(50, 50), new Size());
-//        Rect[] facesArray = face.toArray();
-
-
-//        for (int i = 0; i < facesArray.length; i++)
-//            Imgproc.rectangle(myImageMat, facesArray[0].tl(), facesArray[0].br(), new Scalar(0, 255, 0, 255), 3);
-//        Utils.matToBitmap(myImageMat, imgBitmap);
-//        imgTest.setImageBitmap(imgBitmap);
-//        org.opencv.core.Point first, second;
-//        first = new org.opencv.core.Point(facesArray[0].tl().x + (facesArray[0].width/2), facesArray[0].tl().y + (facesArray[0].height/2));
-//        double angle1 = getAngle(eyesArray[0].tl(), eyesArray[1].tl());
-//        customView.setPoint((float)facesArray[0].tl().x, (float)facesArray[0].tl().y, (float)facesArray[0].br().x, (float) facesArray[0].br().y);
-//        customView.setPoint(74.5f, 917.0f, 1881.0f, 1624.0f);
-//        customView.setPoint(0f, 0f, 200.0f, 200.0f)
     }
 
     private void sizeSelect() {
