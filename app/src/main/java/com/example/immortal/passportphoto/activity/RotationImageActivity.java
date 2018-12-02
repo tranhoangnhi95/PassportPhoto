@@ -1,11 +1,9 @@
 package com.example.immortal.passportphoto.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.Point;
 import android.net.Uri;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -29,23 +27,11 @@ import com.tistory.dwfox.dwrulerviewlibrary.view.ObservableHorizontalScrollView;
 import com.tistory.dwfox.dwrulerviewlibrary.view.ScrollingValuePicker;
 
 import org.opencv.android.OpenCVLoader;
-import org.opencv.android.Utils;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfRect;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.time.LocalDate;
 import java.util.concurrent.ExecutionException;
 
 public class RotationImageActivity extends AppCompatActivity implements View.OnClickListener {
@@ -182,7 +168,7 @@ public class RotationImageActivity extends AppCompatActivity implements View.OnC
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.option_menu_save, menu);
+        getMenuInflater().inflate(R.menu.option_menu_check, menu);
         return true;
     }
 

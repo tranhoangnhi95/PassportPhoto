@@ -22,7 +22,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.immortal.passportphoto.R;
 import com.example.immortal.passportphoto.adapter.MainFunctionAdapter;
@@ -31,7 +30,6 @@ import com.example.immortal.passportphoto.utils.MyConstant;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
@@ -40,7 +38,6 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 
@@ -102,7 +99,7 @@ public class ImageProcessingActivity extends AppCompatActivity {
         sbTemperature = findViewById(R.id.sb_Temperature);
         changeSeekBarColor();
         setSupportActionBar(tbImageProc);
-        setTitle("Chỉnh sủa");
+        setTitle("Chỉnh sửa");
         loadingActionBar();
         brightness = contrast = saturation = temperature = 0;
         String filename = getIntent().getStringExtra("image");
@@ -314,7 +311,7 @@ public class ImageProcessingActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.option_menu_save, menu);
+        getMenuInflater().inflate(R.menu.option_menu_check, menu);
         return true;
     }
 
@@ -322,7 +319,7 @@ public class ImageProcessingActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.mn_Check) {
             Intent iToChangebackground = new Intent(ImageProcessingActivity.this, ChangeBackgroundActivity.class);
-            iToChangebackground.putExtra("image", bitmapToByteArray(myImageBitmap));
+            iToChangebackground.putExtra("image", MyConstant.bitmapToByteArray(myImageBitmap));
             startActivity(iToChangebackground);
         }
         return true;
@@ -563,12 +560,12 @@ public class ImageProcessingActivity extends AppCompatActivity {
         sbTemperature.getThumb().setColorFilter(getResources().getColor(R.color.my_lighter_primary), PorterDuff.Mode.SRC_ATOP);
     }
 
-    private byte[] bitmapToByteArray(Bitmap src){
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        src.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
-
-        return byteArray;
-    }
+//    private byte[] bitmapToByteArray(Bitmap src){
+//        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//        src.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//        byte[] byteArray = stream.toByteArray();
+//
+//        return byteArray;
+//    }
 
 }

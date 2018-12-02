@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.PointF;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,13 +18,11 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.immortal.passportphoto.R;
-import com.example.immortal.passportphoto.asynctask.EyesRecognizeAsyncTask;
 import com.example.immortal.passportphoto.utils.CustomView;
 import com.example.immortal.passportphoto.utils.MyConstant;
 
@@ -33,15 +30,12 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.concurrent.ExecutionException;
 
 public class CropImageActivity extends AppCompatActivity {
     public static String TAG = "MainActivity";
@@ -54,7 +48,6 @@ public class CropImageActivity extends AppCompatActivity {
         }
     }
 
-    public static final float mm2pxConst = 3.7795275591f;
     private Toolbar tbCropImage;
     private Button btnSelectSize;
     private FrameLayout cvPhoto;
@@ -126,7 +119,7 @@ public class CropImageActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.option_menu_save, menu);
+        getMenuInflater().inflate(R.menu.option_menu_check, menu);
         return true;
     }
 
@@ -141,15 +134,15 @@ public class CropImageActivity extends AppCompatActivity {
             bmImageCpy = Bitmap.createBitmap(bmImage, (int) p1x, (int) p1y, (int) (p2x - p1x), (int) (p2y - p1y));
             Utils.bitmapToMat(bmImageCpy, mat);
             if (customView.getSize().equals("2x3")) {
-                Imgproc.resize(mat, mat, new Size(mmToPx(20), mmToPx(30)), 0, 0, Imgproc.INTER_AREA);
-                bmImageCpy = Bitmap.createBitmap(mmToPx(20), mmToPx(30), bmImage.getConfig());
+                Imgproc.resize(mat, mat, new Size(MyConstant.mmToPx(20), MyConstant.mmToPx(30)), 0, 0, Imgproc.INTER_AREA);
+                bmImageCpy = Bitmap.createBitmap(MyConstant.mmToPx(20), MyConstant.mmToPx(30), bmImage.getConfig());
             } else if (customView.getSize().equals("3x4")) {
-                Imgproc.resize(mat, mat, new Size(mmToPx(30), mmToPx(40)), 0, 0, Imgproc.INTER_AREA);
+                Imgproc.resize(mat, mat, new Size(MyConstant.mmToPx(30), MyConstant.mmToPx(40)), 0, 0, Imgproc.INTER_AREA);
 //                Imgproc.resize(mat, mat, new Size(354, 472),0,0, Imgproc.INTER_AREA);
-                bmImageCpy = Bitmap.createBitmap(mmToPx(30), mmToPx(40), bmImage.getConfig());
+                bmImageCpy = Bitmap.createBitmap(MyConstant.mmToPx(30), MyConstant.mmToPx(40), bmImage.getConfig());
             } else {
-                Imgproc.resize(mat, mat, new Size(mmToPx(40), mmToPx(60)), 0, 0, Imgproc.INTER_AREA);
-                bmImageCpy = Bitmap.createBitmap(mmToPx(40), mmToPx(60), bmImage.getConfig());
+                Imgproc.resize(mat, mat, new Size(MyConstant.mmToPx(40), MyConstant.mmToPx(60)), 0, 0, Imgproc.INTER_AREA);
+                bmImageCpy = Bitmap.createBitmap(MyConstant.mmToPx(40), MyConstant.mmToPx(60), bmImage.getConfig());
             }
 
             Utils.matToBitmap(mat, bmImageCpy);
@@ -228,8 +221,4 @@ public class CropImageActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private int mmToPx(int mm) {
-        double pixel = mm * mm2pxConst;
-        return (int) pixel;
-    }
 }

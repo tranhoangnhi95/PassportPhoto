@@ -1,5 +1,6 @@
 package com.example.immortal.passportphoto.activity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -9,22 +10,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.immortal.passportphoto.R;
+import com.example.immortal.passportphoto.utils.MyConstant;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.Point;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class ChangeBackgroundActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -33,6 +37,7 @@ public class ChangeBackgroundActivity extends AppCompatActivity implements View.
     private ImageView imgImage;
     private TextView txtChangeColor;
     private Bitmap bitmap, bitmapCpy, bitmapForeground;
+    private int currentColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,13 +49,13 @@ public class ChangeBackgroundActivity extends AppCompatActivity implements View.
 
     private void init() {
         tbChangeBackground = findViewById(R.id.tb_ChangeBackground);
-        btnRefresh = findViewById(R.id.btn_CBFresh);
+        btnRefresh = findViewById(R.id.btn_CBReFresh);
         imgImage = findViewById(R.id.img_CBImage);
         txtChangeColor = findViewById(R.id.txt_CBChangeColor);
         setSupportActionBar(tbChangeBackground);
         setTitle("Đổi màu nền");
         loadingActionBar();
-
+        currentColor = getResources().getColor(R.color.blue);
         try {
             byte[] bytes = getIntent().getByteArrayExtra("image");
             bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
@@ -58,7 +63,7 @@ public class ChangeBackgroundActivity extends AppCompatActivity implements View.
             e.printStackTrace();
         }
         imgImage.setImageBitmap(bitmap);
-        bitmapCpy = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
+        bitmapCpy = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight());
         bitmapForeground = hsvSegmentation(bitmap);
     }
 
@@ -70,19 +75,31 @@ public class ChangeBackgroundActivity extends AppCompatActivity implements View.
 
     private void controls() {
         txtChangeColor.setOnClickListener(this);
+        btnRefresh.setOnClickListener(this);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.option_menu_save, menu);
+        getMenuInflater().inflate(R.menu.option_menu_check, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.mn_Check) {
+            Intent iToSaveImage = new Intent(ChangeBackgroundActivity.this, SaveImageActivity.class);
+            iToSaveImage.putExtra("image", MyConstant.bitmapToByteArray(bitmapCpy));
+            startActivity(iToSaveImage);
+        }
         return true;
     }
 
     private Bitmap hsvSegmentation(Bitmap src) {
         Bitmap result = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
         Bitmap bBlur = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
+
         Mat mBlur = new Mat();
-        int A, R, G, B, pixel;
+        int A, R, G, B, pixel, A1, R1, G1, B1, pixel1;
         float currentH, H;
         float[] hsv = new float[3];
 
@@ -113,29 +130,43 @@ public class ChangeBackgroundActivity extends AppCompatActivity implements View.
                 if (H >= currentH - 10 && H <= currentH + 10) {
                     hsv[0] = hsv[1] = hsv[2] = 0;
                     A = 0;
+                    result.setPixel(i, j, Color.HSVToColor(A, hsv));
 
+                } else {
+                    result.setPixel(i, j, Color.argb(A, R, G, B));
                 }
-                result.setPixel(i, j, Color.HSVToColor(A, hsv));
-            }
-        }
-        List<MatOfPoint> contours = findBitmapCotour(src);
 
-        Utils.bitmapToMat(result, mBlur);
-        Imgproc.GaussianBlur(mBlur, mBlur, new Size(5, 5), 0);
-        Utils.matToBitmap(mBlur, bBlur);
-//        Imgproc.blur(mBlur, mBlur, new Size(3,3));
-//        Imgproc.medianBlur(mBlur, mBlur, 3);
-//        Utils.matToBitmap(mBlur, result);
-        for (int i = 0; i < contours.size(); i++){
-            for (int j = 0; j < contours.get(i).toArray().length; j++){
-                pixel = bBlur.getPixel((int) contours.get(i).toArray()[j].x, (int) contours.get(i).toArray()[j].y);
-                A = Color.alpha(pixel);
-                R = Color.red(pixel);
-                G = Color.green(pixel);
-                B = Color.blue(pixel);
-                result.setPixel((int) contours.get(i).toArray()[j].x, (int) contours.get(i).toArray()[j].y, Color.argb(A, R, G, B));
             }
         }
+
+//        Utils.bitmapToMat(bBlur, mBlur);
+//        Imgproc.GaussianBlur(mBlur, mBlur, new Size(3, 3), 0);
+//        Utils.matToBitmap(mBlur, bBlur);
+//
+//        for (int i = 0; i < src.getWidth(); i++) {
+//            for (int j = 0; j < src.getHeight(); j++) {
+//                pixel = src.getPixel(i, j);
+//                pixel1 = bBlur.getPixel(i, j);
+//                A = Color.alpha(pixel);
+//                R = Color.red(pixel);
+//                G = Color.green(pixel);
+//                B = Color.blue(pixel);
+//
+//
+//                A1 = Color.alpha(pixel1);
+//                R1 = Color.red(pixel1);
+//                G1 = Color.green(pixel1);
+//                B1 = Color.blue(pixel1);
+//
+//                if (A1 == 0 && R1 == 0 && G1 == 0 && B1 == 0) {
+//                    result.setPixel(i, j, Color.argb(0, 0, 0, 0));
+//                } else {
+//                    result.setPixel(i, j, Color.argb(A, G, R, B));
+//                }
+//            }
+//        }
+
+
         return result;
     }
 
@@ -162,15 +193,41 @@ public class ChangeBackgroundActivity extends AppCompatActivity implements View.
         return contours;
     }
 
+    private void openDialog(boolean supportsAlpha) {
+        AmbilWarnaDialog dialog = new AmbilWarnaDialog(this, currentColor, supportsAlpha, new AmbilWarnaDialog.OnAmbilWarnaListener() {
+            @Override
+            public void onOk(AmbilWarnaDialog dialog, int color) {
+                currentColor = color;
+                txtChangeColor.setTextColor(color);
+                bitmapCpy = changeBackground(bitmap, color);
+                imgImage.setImageBitmap(bitmapCpy);
+            }
+
+            @Override
+            public void onCancel(AmbilWarnaDialog dialog) {
+            }
+        });
+        dialog.show();
+    }
+
+    private Bitmap changeBackground(Bitmap src, int color) {
+        Bitmap result = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
+        Canvas canvas = new Canvas(result);
+        canvas.drawColor(color);
+        canvas.drawBitmap(bitmapForeground, 0, 0, null);
+        return result;
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.txt_CBChangeColor:
-                Canvas canvas = new Canvas(bitmapCpy);
-                canvas.drawColor(Color.argb(255, 0, 255, 0));
-                canvas.drawBitmap(bitmapForeground, 0, 0, null);
-
+                openDialog(true);
+                break;
+            case R.id.btn_CBReFresh:
+                bitmapCpy = bitmap;
                 imgImage.setImageBitmap(bitmapCpy);
+                break;
         }
     }
 }

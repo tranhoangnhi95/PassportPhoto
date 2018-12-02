@@ -18,7 +18,7 @@
     <color name="testcolor">#5c03a9f4</color>
     <color name="blur">#59323232</color>
     <color name="blue_blur">#afafaf</color>
-
+    <color name="blue">#1464ff</color>
     <color name="default_screen_bg">#f9f9f9</color>
     <color name="rounded_container_bg">#222222</color>
     <color name="rounded_container_border">#3b3f44</color>

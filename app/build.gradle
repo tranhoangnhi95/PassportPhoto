@@ -38,4 +38,7 @@ dependencies {
 
     //horizontal listview
     implementation 'org.lucasr.twowayview:twowayview:0.1.4'
+
+    //color picker
+    implementation 'com.github.yukuku:ambilwarna:2.0.1'
 }
