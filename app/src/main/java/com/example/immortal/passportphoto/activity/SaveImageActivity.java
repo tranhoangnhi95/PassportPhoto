@@ -1,6 +1,8 @@
 package com.example.immortal.passportphoto.activity;
 
 import android.app.AlertDialog;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -10,6 +12,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -25,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.immortal.passportphoto.R;
+import com.example.immortal.passportphoto.asynctask.SaveImageAsyncTask;
 import com.example.immortal.passportphoto.utils.MyConstant;
 
 import java.io.File;
@@ -270,7 +274,7 @@ public class SaveImageActivity extends AppCompatActivity implements View.OnClick
             txtQuantity.setText(String.valueOf(quantity) + "/" + String.valueOf(max));
             imgImage.setImageBitmap(bitmapOut);
         }
-        Log.d("Today", "quantity: " +quantity);
+        Log.d("Today", "quantity: " + quantity);
         Log.d("Today", "Decrease");
     }
 
@@ -296,8 +300,8 @@ public class SaveImageActivity extends AppCompatActivity implements View.OnClick
 
     //Phuong thuc luu anh
     public void Luu() {
-        String root = Environment.getExternalStorageDirectory().toString();
-        File myDir = new File(root + "/MyPhoto_Id");
+        File filepath = Environment.getExternalStorageDirectory();
+        File myDir = new File(filepath.getAbsolutePath() + "/MyPhoto_Id/");
         if (!myDir.exists()) {
             myDir.mkdirs();
         }
@@ -307,30 +311,8 @@ public class SaveImageActivity extends AppCompatActivity implements View.OnClick
         File file = new File(myDir, fname);
         if (file.exists())
             file.delete();
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            bitmapOut.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            out.flush();
-            out.close();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        refreshGallery(file);
-        Log.d("Today", "Save images");
+        SaveImageAsyncTask asyncTask = new SaveImageAsyncTask(this, file);
+        asyncTask.execute(bitmapOut);
     }
-
-    //lam moi thu vien anh
-    public void refreshGallery(File file) {
-        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        intent.setData(Uri.fromFile(file));
-        sendBroadcast(intent);
-    }
-//
-//    //lay duongdan
-//    private File getDisc() {
-//        File file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-//        return new File(file, "Image");
-//    }
 }
