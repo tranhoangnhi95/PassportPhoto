@@ -74,6 +74,12 @@ public class ChangeBackgroundActivity extends AppCompatActivity implements View.
     }
 
     private void controls() {
+        tbChangeBackground.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
         txtChangeColor.setOnClickListener(this);
         btnRefresh.setOnClickListener(this);
     }
@@ -229,5 +235,10 @@ public class ChangeBackgroundActivity extends AppCompatActivity implements View.
                 imgImage.setImageBitmap(bitmapCpy);
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

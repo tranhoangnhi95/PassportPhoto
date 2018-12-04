@@ -230,14 +230,17 @@ public class RotationImageActivity extends AppCompatActivity implements View.OnC
     }
 
     private double getAngle(org.opencv.core.Point firstPoint, org.opencv.core.Point secondPoint) {
-        double dx = firstPoint.x - secondPoint.x;
-        double dy = firstPoint.y - secondPoint.y;
-        double inRads = Math.atan2(dy, dx);
-        if (inRads < 0)
-            inRads = Math.abs(inRads);
-        else
-            inRads = 2 * Math.PI - inRads;
+        double dx, dy;
+        dx = dy = 0;
+        if (secondPoint.x >= firstPoint.x){
+            dx = secondPoint.x - firstPoint.x;
+            dy = secondPoint.y - firstPoint.y;
+        }else {
+            dx = firstPoint.x - secondPoint.x;
+            dy = firstPoint.y - secondPoint.y;
+        }
 
+        double inRads = Math.atan2(dy, dx);
         return Math.toDegrees(inRads);
     }
 
@@ -248,26 +251,11 @@ public class RotationImageActivity extends AppCompatActivity implements View.OnC
 //        Utils.matToBitmap(myImageMat, imgBitmap);
 //        imgPhoto.setImageBitmap(imgBitmap);
 //        double angle1 = getAngle(eyesArray[0].tl(), eyesArray[1].tl());
-        double angle1 = 360 - getAngle(p1, p2);
+        double angle1 = getAngle(p1, p2);
         Log.d("Angle", "" + String.valueOf(angle1));
         imgBitmapCpy = rotateBitmap(imgBitmapCpy, (float) -angle1);
         imgPhoto.setImageBitmap(imgBitmapCpy);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d("Test", String.valueOf(imgBitmap == null));
-        if (imgBitmap == null || imgBitmapCpy == null) {
-            try {
-                FileInputStream is = this.openFileInput(RotationImageActivity.filename);
-                imgBitmap = BitmapFactory.decodeStream(is);
-                imgBitmapCpy = imgBitmap.copy(imgBitmap.getConfig(), imgBitmap.isMutable());
-                is.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        Log.d("Resume", "resume");
-    }
+
 }

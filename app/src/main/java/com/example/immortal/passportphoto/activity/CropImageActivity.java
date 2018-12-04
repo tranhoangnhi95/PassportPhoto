@@ -169,6 +169,12 @@ public class CropImageActivity extends AppCompatActivity {
     }
 
     private void controls() {
+        tbCropImage.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
         btnSelectSize.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -221,4 +227,8 @@ public class CropImageActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 }

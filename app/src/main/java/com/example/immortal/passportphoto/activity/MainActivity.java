@@ -57,8 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void init() {
         btnNewImage = findViewById(R.id.btn_NewImage);
-        btnOldImage = findViewById(R.id.btn_OldImage
-        );
+        btnOldImage = findViewById(R.id.btn_OldImage);
     }
 
     private void control() {
@@ -72,13 +71,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_NewImage:
-                Intent iToNewImage = new Intent(MainActivity.this, NewImageActivity.class);
-                startActivity(iToNewImage);
+                captureNewImage();
                 break;
             case R.id.btn_OldImage:
                 selectImageFromGallery();
                 break;
         }
+    }
+
+
+    private void captureNewImage() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, CAM_REQUEST);
     }
 
     private void selectImageFromGallery() {
@@ -95,17 +99,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Intent iToRotationImage = new Intent(MainActivity.this, RotationImageActivity.class);
         if (resultCode == RESULT_OK && requestCode == CAM_REQUEST) {
             bitmapImage = (Bitmap) data.getExtras().get("data");
-            Intent iToImgProc = new Intent(MainActivity.this, ImageProcessingActivity.class);
+
             imageUri = getImageUri(getApplicationContext(), bitmapImage);
-            iToImgProc.putExtra("img", imageUri.toString());
-            startActivity(iToImgProc);
+            iToRotationImage.putExtra("img", imageUri.toString());
+            startActivity(iToRotationImage);
         } else if (resultCode == RESULT_OK && requestCode == PICK_REQUEST) {
             imageUri = data.getData();
-            Intent iToImgProc = new Intent(MainActivity.this, ImageProcessingActivity.class);
-            iToImgProc.putExtra("img", imageUri.toString());
-            startActivity(iToImgProc);
+            iToRotationImage.putExtra("img", imageUri.toString());
+            startActivity(iToRotationImage);
         }
     }
 

@@ -41,7 +41,7 @@ public class CheckAutoEnableAsyncTask extends AsyncTask<Bitmap, Void, org.opencv
         MatOfRect eyes = new MatOfRect();
         Utils.bitmapToMat(bitmaps[0], myImageMat);
         Imgproc.cvtColor(myImageMat, myImageMat, Imgproc.COLOR_RGBA2GRAY);
-        Imgproc.resize(myImageMat, myImageMat, new Size(bitmaps[0].getWidth() / 5, bitmaps[0].getHeight() / 5));
+//        Imgproc.resize(myImageMat, myImageMat, new Size(bitmaps[0].getWidth() / 5, bitmaps[0].getHeight() / 5));
         RotationImageActivity.mCascadeClassifier.detectMultiScale(myImageMat, eyes, 1.1, 10, 10, new Size(20, 20), new Size());
         org.opencv.core.Rect[] eyesArray = eyes.toArray();
 
@@ -50,8 +50,11 @@ public class CheckAutoEnableAsyncTask extends AsyncTask<Bitmap, Void, org.opencv
             Log.d("Today", "eyes.length = 2");
 //            points[0].x = (eyesArray[0].tl().x + eyesArray[0].br().x)/2;
 //            points[0].y = (eyesArray[0].tl().y + eyesArray[0].br().y)/2;
-            points[0] = new org.opencv.core.Point((eyesArray[0].tl().x + eyesArray[0].br().x) * 5 / 2, (eyesArray[0].tl().y + eyesArray[0].br().y) * 5 / 2);
-            points[1] = new org.opencv.core.Point((eyesArray[1].tl().x + eyesArray[1].br().x) * 5 / 2, (eyesArray[1].tl().y + eyesArray[1].br().y) * 5 / 2);
+//            points[0] = new org.opencv.core.Point((eyesArray[0].tl().x + eyesArray[0].br().x) * 5 / 2, (eyesArray[0].tl().y + eyesArray[0].br().y) * 5 / 2);
+//            points[1] = new org.opencv.core.Point((eyesArray[1].tl().x + eyesArray[1].br().x) * 5 / 2, (eyesArray[1].tl().y + eyesArray[1].br().y) * 5 / 2);
+            points[0] = new org.opencv.core.Point((eyesArray[0].tl().x + eyesArray[0].br().x)/ 2, (eyesArray[0].tl().y + eyesArray[0].br().y)/ 2);
+            points[1] = new org.opencv.core.Point((eyesArray[1].tl().x + eyesArray[1].br().x)/ 2, (eyesArray[1].tl().y + eyesArray[1].br().y)/ 2);
+
 //            points[1].x = (eyesArray[1].tl().x + eyesArray[1].br().x)/2;
 //            points[1].y = (eyesArray[1].tl().y + eyesArray[1].br().y)/2;
         } else {

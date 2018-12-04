@@ -90,6 +90,12 @@ public class SaveImageActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void controls() {
+        tbSavaImage.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
         txtSize.setOnClickListener(this);
         btnDecrease.setOnClickListener(this);
         btnIncrease.setOnClickListener(this);
@@ -314,5 +320,10 @@ public class SaveImageActivity extends AppCompatActivity implements View.OnClick
 
         SaveImageAsyncTask asyncTask = new SaveImageAsyncTask(this, file);
         asyncTask.execute(bitmapOut);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

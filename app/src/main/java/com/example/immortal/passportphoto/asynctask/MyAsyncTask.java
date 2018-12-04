@@ -11,9 +11,10 @@ import com.example.immortal.passportphoto.activity.RotationImageActivity;
 
 import java.io.FileOutputStream;
 
-public class MyAsyncTask extends AsyncTask<Bitmap,Void, Void> {
+public class MyAsyncTask extends AsyncTask<Bitmap, Void, Void> {
     private ProgressDialog dialog;
     private RotationImageActivity activity;
+
     public MyAsyncTask(RotationImageActivity activity) {
         dialog = new ProgressDialog(activity);
         this.activity = activity;
@@ -29,11 +30,11 @@ public class MyAsyncTask extends AsyncTask<Bitmap,Void, Void> {
     @Override
     protected Void doInBackground(Bitmap... bitmaps) {
         try {
-            FileOutputStream stream = activity.openFileOutput(RotationImageActivity.filename,Context.MODE_PRIVATE);
+            FileOutputStream stream = activity.openFileOutput(RotationImageActivity.filename, Context.MODE_PRIVATE);
             bitmaps[0].compress(Bitmap.CompressFormat.PNG, 100, stream);
             stream.close();
-            bitmaps[0].recycle();
-        }catch (Exception e){
+//            bitmaps[0].recycle();
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
