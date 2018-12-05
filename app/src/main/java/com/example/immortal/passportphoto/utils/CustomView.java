@@ -187,10 +187,10 @@ public class CustomView extends View {
                 case MotionEvent.ACTION_DOWN:
                     if (event.getX() >= p2x - 20f && event.getX() <= p2x + 20f && event.getY() >= p2y - 20f && event.getY() <= p2y + 20f) {
                         scaleRect = true;
-                        percent = (event.getX() - p2x) / p2x;
-                        p2x = event.getX();
+//                        percent = (event.getX() - p2x) / p2x;
+//                        p2x = event.getX();
 //                        p2y = event.getY();
-                        p2y = p2y + percent * p2y;
+//                        p2y = p2y + percent * p2y;
                     } else if (event.getX() > p1x && event.getX() < p2x && event.getY() > p1y && event.getY() < p2y) {
                         moveRect = true;
                         currentX = event.getX();
@@ -206,11 +206,11 @@ public class CustomView extends View {
                     if (stopWorking) {
                         break;
                     }
+
                     if (moveRect) {
                         deltaX = event.getX() - currentX;
                         deltaY = event.getY() - currentY;
                         if (Math.abs(deltaX) >= 1f || Math.abs(deltaY) >= 1f) {
-
                             if (!checkMoveAble(deltaX, deltaY)) {
                                 currentX = event.getX();
                                 currentY = event.getY();
@@ -228,11 +228,20 @@ public class CustomView extends View {
                         }
                     } else {
                         scaleRect = true;
-                        percent = (event.getX() - p2x) / p2x;
+//                            percent = (event.getX() - p2x) * 100 / p2x;
                         p2x = event.getX();
-//                        p2y = event.getY();
-                        p2y = p2y + percent * p2y;
+                        Log.d("today", "p2x: " + String.valueOf(p2x));
+                        Log.d("today", "p1x: " + String.valueOf(p1x));
+                        Log.d("today", "p1y: " + String.valueOf(p1y));
+                        if (size.equals("3x4")) {
+                            p2y = p1y + ((p2x - p1x) * (4f / 3f));
+                        } else {
+                            p2y = p1y + ((p2x - p1x) * (3f / 2f));
+                        }
+                        Log.d("today", "p2y: " + String.valueOf(p2y));
                         paint2.setColor(getResources().getColor(R.color.my_lighter_secondary));
+
+
                     }
 
                     break;
@@ -242,10 +251,16 @@ public class CustomView extends View {
                         break;
                     }
                     if (!moveRect) {
-                        percent = (event.getX() - p2x) / p2x;
                         p2x = event.getX();
-//                        p2y = event.getY();
-                        p2y = p2y + percent * p2y;
+                        Log.d("today", "p2x: " + String.valueOf(p2x));
+                        Log.d("today", "p1x: " + String.valueOf(p1x));
+                        Log.d("today", "p1y: " + String.valueOf(p1y));
+                        if (size.equals("3x4")) {
+                            p2y = p1y + ((p2x - p1x) * (4f / 3f));
+                        } else {
+                            p2y = p1y + ((p2x - p1x) * (3f / 2f));
+                        }
+                        Log.d("today", "p2y: " + String.valueOf(p2y));
                     }
                     paint2.setColor(getResources().getColor(R.color.blur));
                     moveRect = false;

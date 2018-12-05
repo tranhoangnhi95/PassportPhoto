@@ -26,16 +26,24 @@
         android:layout_weight="10"
         android:background="@color/my_primary"
         android:gravity="center"
-        android:orientation="vertical">
-
+        android:orientation="horizontal">
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
         <Button
+            android:layout_weight="2"
             android:id="@+id/btn_SelectImageSize"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_margin="2dp"
             android:background="@drawable/white_radius_button_selector"
             android:padding="5dp"
             android:text="@string/select_id_photo_size" />
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
     </LinearLayout>
 
 </LinearLayout>

@@ -253,7 +253,7 @@ public class RotationImageActivity extends AppCompatActivity implements View.OnC
 //        double angle1 = getAngle(eyesArray[0].tl(), eyesArray[1].tl());
         double angle1 = getAngle(p1, p2);
         Log.d("Angle", "" + String.valueOf(angle1));
-        imgBitmapCpy = rotateBitmap(imgBitmapCpy, (float) -angle1);
+        imgBitmapCpy = rotateBitmap(imgBitmap, (float) -angle1);
         imgPhoto.setImageBitmap(imgBitmapCpy);
     }
 

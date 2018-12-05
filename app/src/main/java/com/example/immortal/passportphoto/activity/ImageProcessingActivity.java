@@ -319,7 +319,7 @@ public class ImageProcessingActivity extends AppCompatActivity {
     public Bitmap adjustContrast(Bitmap src, float value) {
         value = value / 4;
         Bitmap result = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
-        ColorMatrix cm = new ColorMatrix();
+            ColorMatrix cm = new ColorMatrix();
         value = (int) cleanValue(value, 100);
         if (value == 0) {
             return src;
@@ -359,25 +359,9 @@ public class ImageProcessingActivity extends AppCompatActivity {
     public Bitmap adjustSaturation(Bitmap src, float value) {
         Bitmap result = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
         ColorMatrix cm = new ColorMatrix();
-        value = cleanValue(value, 100);
-        if (value == 0) {
-            return src;
-        }
+        value = (value + 100)/100;
 
-        float x = 1 + ((value > 0) ? 3 * value / 100 : value / 100);
-        float lumR = 0.3086f;
-        float lumG = 0.6094f;
-        float lumB = 0.0820f;
-
-        float[] mat = new float[]
-                {
-                        lumR * (1 - x) + x, lumG * (1 - x), lumB * (1 - x), 0, 0,
-                        lumR * (1 - x), lumG * (1 - x) + x, lumB * (1 - x), 0, 0,
-                        lumR * (1 - x), lumG * (1 - x), lumB * (1 - x) + x, 0, 0,
-                        0, 0, 0, 1, 0,
-                        0, 0, 0, 0, 1
-                };
-        cm.postConcat(new ColorMatrix(mat));
+        cm.setSaturation(value);
         ColorMatrixColorFilter filter = new ColorMatrixColorFilter(cm);
         Canvas canvas = new Canvas(result);
         Paint paint = new Paint();
@@ -490,12 +474,6 @@ public class ImageProcessingActivity extends AppCompatActivity {
         sbTemperature.getThumb().setColorFilter(getResources().getColor(R.color.my_lighter_primary), PorterDuff.Mode.SRC_ATOP);
     }
 
-//    private byte[] bitmapToByteArray(Bitmap src){
-//        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//        src.compress(Bitmap.CompressFormat.PNG, 100, stream);
-//        byte[] byteArray = stream.toByteArray();
-//
-//        return byteArray;
-//    }
+
 
 }

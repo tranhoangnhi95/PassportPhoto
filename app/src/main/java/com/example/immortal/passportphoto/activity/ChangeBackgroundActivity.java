@@ -102,22 +102,20 @@ public class ChangeBackgroundActivity extends AppCompatActivity implements View.
 
     private Bitmap hsvSegmentation(Bitmap src) {
         Bitmap result = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
-        Bitmap bBlur = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
-
-        Mat mBlur = new Mat();
-        int A, R, G, B, pixel, A1, R1, G1, B1, pixel1;
+        Bitmap mask = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
+        Mat mMask = new Mat();
+        int A, R, G, B, pixel;
         float currentH, H;
         float[] hsv = new float[3];
 
         pixel = src.getPixel(0, 0);
-        A = Color.alpha(pixel);
         R = Color.red(pixel);
         G = Color.green(pixel);
         B = Color.blue(pixel);
 
         Color.RGBToHSV(R, G, B, hsv);
-
         currentH = hsv[0];
+
         for (int i = 0; i < src.getWidth(); i++) {
             for (int j = 0; j < src.getHeight(); j++) {
                 pixel = src.getPixel(i, j);
@@ -133,46 +131,35 @@ public class ChangeBackgroundActivity extends AppCompatActivity implements View.
 //                    hsv[0] = hsv[1] = hsv[2] = 0;
 //                }
 //                else
+                result.setPixel(i, j, Color.argb(A, R, G, B));
                 if (H >= currentH - 10 && H <= currentH + 10) {
                     hsv[0] = hsv[1] = hsv[2] = 0;
                     A = 0;
-                    result.setPixel(i, j, Color.HSVToColor(A, hsv));
-
+                    mask.setPixel(i, j, Color.HSVToColor(A, hsv));
                 } else {
-                    result.setPixel(i, j, Color.argb(A, R, G, B));
+                    A = 255;
+                    G = R = B = 0;
+                    mask.setPixel(i, j, Color.argb(A, R, G, B));
                 }
 
             }
         }
+        Utils.bitmapToMat(mask, mMask);
+        Imgproc.GaussianBlur(mMask, mMask, new Size(5, 5), 1/273);
+        Utils.matToBitmap(mMask, mask);
+        for (int i = 0; i < src.getWidth(); i++) {
+            for (int j = 0; j < src.getHeight(); j++) {
+                pixel = mask.getPixel(i, j);
+                A = Color.alpha(pixel);
+                R = Color.red(pixel);
+                G = Color.green(pixel);
+                B = Color.blue(pixel);
 
-//        Utils.bitmapToMat(bBlur, mBlur);
-//        Imgproc.GaussianBlur(mBlur, mBlur, new Size(3, 3), 0);
-//        Utils.matToBitmap(mBlur, bBlur);
-//
-//        for (int i = 0; i < src.getWidth(); i++) {
-//            for (int j = 0; j < src.getHeight(); j++) {
-//                pixel = src.getPixel(i, j);
-//                pixel1 = bBlur.getPixel(i, j);
-//                A = Color.alpha(pixel);
-//                R = Color.red(pixel);
-//                G = Color.green(pixel);
-//                B = Color.blue(pixel);
-//
-//
-//                A1 = Color.alpha(pixel1);
-//                R1 = Color.red(pixel1);
-//                G1 = Color.green(pixel1);
-//                B1 = Color.blue(pixel1);
-//
-//                if (A1 == 0 && R1 == 0 && G1 == 0 && B1 == 0) {
-//                    result.setPixel(i, j, Color.argb(0, 0, 0, 0));
-//                } else {
-//                    result.setPixel(i, j, Color.argb(A, G, R, B));
-//                }
-//            }
-//        }
-
-
+                if (A == 0 && R == 0 && G == 0 && B == 0) {
+                    result.setPixel(i, j, Color.argb(0, 0, 0, 0));
+                }
+            }
+        }
         return result;
     }
 
@@ -184,7 +171,7 @@ public class ChangeBackgroundActivity extends AppCompatActivity implements View.
         Bitmap result = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
         Utils.bitmapToMat(src, mGray);
         Imgproc.cvtColor(mGray, mGray, Imgproc.COLOR_RGBA2GRAY);
-        Imgproc.blur(mGray, mGray, new Size(3, 3));
+        Imgproc.blur(mGray, mGray, new Size(9, 9));
         Imgproc.Canny(mGray, cannyOutput, 50, 200);
 
         Imgproc.findContours(cannyOutput, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_NONE);

@@ -104,6 +104,7 @@ public class CropImageActivity extends AppCompatActivity {
                 cvPhoto.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
+        btnSelectSize.setText(String.valueOf(size));
         customView.setSize(size);
         cvPhoto.addView(customView);
 
@@ -219,6 +220,7 @@ public class CropImageActivity extends AppCompatActivity {
 
                 dialogInterface.dismiss();
                 customView.setSize(size);
+                btnSelectSize.setText(String.valueOf(size));
                 Toast.makeText(CropImageActivity.this, size, Toast.LENGTH_SHORT).show();
             }
         });
