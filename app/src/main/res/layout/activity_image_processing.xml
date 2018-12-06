@@ -84,9 +84,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="10dp"
-                android:max="90"
+                android:max="200"
                 android:min="0"
-                android:progress="45"
+                android:progress="100"
                 android:secondaryProgress="0"
                 android:visibility="invisible" />
         </FrameLayout>

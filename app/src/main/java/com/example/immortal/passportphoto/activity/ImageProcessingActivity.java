@@ -123,7 +123,7 @@ public class ImageProcessingActivity extends AppCompatActivity {
             MainFunction mainFunction2 = new MainFunction("Tự động", applyAdjust(imgBitmap, 10, 10, 10, 0));
             mainFunctions.add(mainFunction2);
 
-            MainFunction mainFunction3 = new MainFunction("Sáng tối", adjustBrightness(imgBitmap,10));
+            MainFunction mainFunction3 = new MainFunction("Sáng tối", adjustBrightness(imgBitmap, 10));
             mainFunctions.add(mainFunction3);
 
             MainFunction mainFunction4 = new MainFunction("Tương phản", adjustContrast(imgBitmap, 10));
@@ -132,7 +132,7 @@ public class ImageProcessingActivity extends AppCompatActivity {
             MainFunction mainFunction5 = new MainFunction("Bão hòa", adjustSaturation(imgBitmap, 10));
             mainFunctions.add(mainFunction5);
 
-            MainFunction mainFunction6 = new MainFunction("Nhiệt độ", adjustTemperature(imgBitmap, 5));
+            MainFunction mainFunction6 = new MainFunction("Nhiệt độ", adjustTemperature(imgBitmap, 20));
             mainFunctions.add(mainFunction6);
 
         }
@@ -220,7 +220,7 @@ public class ImageProcessingActivity extends AppCompatActivity {
         sbTemperature.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                temperature = i - 45;
+                temperature = i - 100;
                 myImageBitmap = applyAdjust(imgBitmap, brightness, contrast, saturation, temperature);
                 imgMyPhoto.setImageBitmap(myImageBitmap);
                 txtValue.setText(String.valueOf(temperature));
@@ -319,7 +319,7 @@ public class ImageProcessingActivity extends AppCompatActivity {
     public Bitmap adjustContrast(Bitmap src, float value) {
         value = value / 4;
         Bitmap result = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
-            ColorMatrix cm = new ColorMatrix();
+        ColorMatrix cm = new ColorMatrix();
         value = (int) cleanValue(value, 100);
         if (value == 0) {
             return src;
@@ -359,7 +359,7 @@ public class ImageProcessingActivity extends AppCompatActivity {
     public Bitmap adjustSaturation(Bitmap src, float value) {
         Bitmap result = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
         ColorMatrix cm = new ColorMatrix();
-        value = (value + 100)/100;
+        value = (value + 100) / 100;
 
         cm.setSaturation(value);
         ColorMatrixColorFilter filter = new ColorMatrixColorFilter(cm);
@@ -372,82 +372,34 @@ public class ImageProcessingActivity extends AppCompatActivity {
 
     public Bitmap adjustTemperature(Bitmap src, float value) {
         Bitmap result = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
-        ColorMatrix cm = new ColorMatrix();
-        double R, G, B;
-//        value = (int) cleanValue(value, 100);
-        if (value == 0) {
-            return src;
-        }
-        value = (5500 - (100 * value)) / 100;
+        int temperature = Math.round(value/5);
+        int pixel, A, R, G, B;
+        for (int i = 0; i < src.getWidth(); i++) {
+            for (int j = 0; j < src.getHeight(); j++) {
+                pixel = src.getPixel(i, j);
 
+                A = Color.alpha(pixel);
+                R = Color.red(pixel);
+                G = Color.green(pixel);
+                B = Color.blue(pixel);
 
-        //Red
-        if (value <= 66) {
-            R = 255;
-        } else {
-            R = value - 60;
-            R = 329.698727446 * Math.pow(R, -0.1332047592);
-            if (R < 0) {
-                R = 0;
-            }
-            if (R > 255) {
-                R = 255;
-            }
-        }
+                R = R + temperature;
+                B = B - temperature;
 
-        //Green
-        if (value < 66) {
-            G = value;
-            G = 99.4708025861 * Math.log(G) - 161.1195681661;
-            if (G < 0) {
-                G = 0;
-            }
-            if (G > 255) {
-                G = 255;
-            }
-        } else {
-            G = value - 60;
-            G = 288.1221695283 * Math.pow(G, -0.0755148492);
-            if (G < 0) {
-                G = 0;
-            }
-            if (G > 255) {
-                G = 255;
+                if (R > 255){
+                    R = 255;
+                }else if (R < 0){
+                    R = 0;
+                }
+                if (B > 255){
+                    B = 255;
+                }else if (B < 0){
+                    B = 0;
+                }
+
+                result.setPixel(i, j, Color.argb(A, R, G, B));
             }
         }
-
-
-        //Blue
-        if (value >= 66) {
-            B = 255;
-        } else if (value <= 19) {
-            B = 0;
-        } else {
-            B = value - 10;
-            B = 138.5177312231 * Math.log(B) - 305.0447927307;
-            if (B < 0) {
-                B = 0;
-            }
-            if (B > 255) {
-                B = 255;
-            }
-        }
-        float[] mat = new float[]
-                {
-                        (float) R / 255f, 0, 0, 0, 0,
-                        0, (float) G / 255f, 0, 0, 0,
-                        0, 0, (float) B / 255f, 0, 0,
-                        0, 0, 0, 1, 0
-
-                };
-
-
-        cm.postConcat(new ColorMatrix(mat));
-        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(cm);
-        Canvas canvas = new Canvas(result);
-        Paint paint = new Paint();
-        paint.setColorFilter(filter);
-        canvas.drawBitmap(src, 0, 0, paint);
         return result;
     }
 
@@ -473,7 +425,6 @@ public class ImageProcessingActivity extends AppCompatActivity {
         sbTemperature.getProgressDrawable().setColorFilter(getResources().getColor(R.color.my_lighter_primary), PorterDuff.Mode.MULTIPLY);
         sbTemperature.getThumb().setColorFilter(getResources().getColor(R.color.my_lighter_primary), PorterDuff.Mode.SRC_ATOP);
     }
-
 
 
 }

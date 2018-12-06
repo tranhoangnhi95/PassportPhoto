@@ -87,14 +87,14 @@ public class MainFunctionAdapter extends RecyclerView.Adapter<MainFunctionAdapte
                         sbContrast.setVisibility(View.INVISIBLE);
                         sbSaturation.setVisibility(View.INVISIBLE);
                         sbTemperature.setVisibility(View.VISIBLE);
-                        txtValue.setText(String.valueOf(sbTemperature.getProgress() - 45));
+                        txtValue.setText(String.valueOf(sbTemperature.getProgress() - 100));
                         txtValue.setVisibility(View.VISIBLE);
                         break;
                     case "Tự động":
                         sbBrightness.setProgress(110);
                         sbContrast.setProgress(110);
                         sbSaturation.setProgress(110);
-                        sbTemperature.setProgress(45);
+                        sbTemperature.setProgress(110);
                         sbBrightness.setVisibility(View.INVISIBLE);
                         txtValue.setText(String.valueOf(0));
                         sbContrast.setVisibility(View.INVISIBLE);
@@ -107,7 +107,7 @@ public class MainFunctionAdapter extends RecyclerView.Adapter<MainFunctionAdapte
                         sbBrightness.setProgress(100);
                         sbContrast.setProgress(100);
                         sbSaturation.setProgress(100);
-                        sbTemperature.setProgress(45);
+                        sbTemperature.setProgress(100);
                         sbBrightness.setVisibility(View.INVISIBLE);
                         txtValue.setText(String.valueOf(0));
                         sbContrast.setVisibility(View.INVISIBLE);
