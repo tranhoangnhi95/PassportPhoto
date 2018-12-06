@@ -51,20 +51,17 @@ public class EyesRecognizeAsyncTask extends AsyncTask<Bitmap, Void, org.opencv.c
             Log.d("Today", "eyes.length = 2");
             points[0] = new Point((eyesArray[0].tl().x + eyesArray[0].br().x) / 2, (eyesArray[0].tl().y + eyesArray[0].br().y)/ 2);
             points[1] = new Point((eyesArray[1].tl().x + eyesArray[1].br().x) / 2, (eyesArray[1].tl().y + eyesArray[1].br().y)/ 2);
-//            points[0] = new org.opencv.core.Point((eyesArray[0].tl().x + eyesArray[0].br().x) * 5 / 2, (eyesArray[0].tl().y + eyesArray[0].br().y) * 5 / 2);
-//            points[1] = new org.opencv.core.Point((eyesArray[1].tl().x + eyesArray[1].br().x) * 5 / 2, (eyesArray[1].tl().y + eyesArray[1].br().y) * 5 / 2);
 
         } else {
 
             Log.d("Today", "eye != 2");
             Log.d("Today", "eye length = " + String.valueOf(eyesArray.length));
             Point tl, br;
-            if (bitmaps[0].getWidth() <= bitmaps[0].getHeight()) {
-//                points[0] = new Point(bitmaps[0].getWidth() / 8, bitmaps[0].getWidth() / 8);
-//                points[1] = new Point(3 * bitmaps[0].getWidth() / 8, bitmaps[0].getWidth() / 8);
-                points[0] = new org.opencv.core.Point(3 * bitmaps[0].getWidth() / 8, bitmaps[0].getHeight() * 2 / 5);
-                points[1] = new org.opencv.core.Point(2 * bitmaps[0].getWidth() / 3, bitmaps[0].getHeight() * 2 / 5);
-            }
+//            if (bitmaps[0].getWidth() <= bitmaps[0].getHeight()) {
+
+                points[0] = new org.opencv.core.Point(bitmaps[0].getWidth() * 47.5/100, bitmaps[0].getHeight() /2);
+                points[1] = new org.opencv.core.Point(bitmaps[0].getWidth() * 52.5/100, bitmaps[0].getHeight() /2);
+//            }
         }
         Log.d("Today", "bitmap Width ------ " + bitmaps[0].getWidth());
         Log.d("Today", "bitmap Height ------ " + bitmaps[0].getHeight());

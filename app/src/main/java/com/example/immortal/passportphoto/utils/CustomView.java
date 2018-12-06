@@ -290,22 +290,34 @@ public class CustomView extends View {
         this.scaleRect = true;
 
         if (size.equals("4x6")) {
-            p1x = x1 - (x2 - x1) * 32.5f / 35f;
-            p1y = y1 - (x2 - x1) * 3 * 40f / 70f;
-            p2x = x2 + (x2 - x1) * 32.5f / 35f;
-            p2y = y1 + (x2 - x1) * 3 * 60f / 70f;
+//            p1x = x1 - (x2 - x1) * 32.5f / 35f;
+//            p1y = y1 - (x2 - x1) * 3 * 40f / 70f;
+//            p2x = x2 + (x2 - x1) * 32.5f / 35f;
+//            p2y = y1 + (x2 - x1) * 3 * 60f / 70f;
+            p1x = x1 - (x2 - x1) * 41f / 18f;
+            p1y = y1 - (x2 - x1) *40f / 12f;
+            p2x = x2 + (x2 - x1) * 41f / 18f;
+            p2y = y1 + (x2 - x1) * 60f/ 12f;
         } else if (size.equals("3x4")) {
 
-            p1x = x1 - (x2 - x1) * 33.3f / 33.4f;
-            p1y = y1 - (x2 - x1) * 43.75f / 25f;
-            p2x = x2 + (x2 - x1) * 33.3f / 33.4f;
-            p2y = y1 + (x2 - x1) * 56.25f / 25f;
+//            p1x = x1 - (x2 - x1) * 33.3f / 33.4f;
+//            p1y = y1 - (x2 - x1) * 43.75f / 25f;
+//            p2x = x2 + (x2 - x1) * 33.3f / 33.4f;
+//            p2y = y1 + (x2 - x1) * 56.25f / 25f;
+            p1x = x1 - (x2 - x1) * 39f / 22f;
+            p1y = y1 - (x2 - x1) * 40f / 16.5f;
+            p2x = x2 + (x2 - x1) * 39f / 22f;
+            p2y = y1 + (x2 - x1) * 60f / 16.5f;
 
         } else {
-            p1x = x1 - (x2 - x1) * 30f / 40f;
-            p1y = y1 - (x2 - x1) * 3 * 43.35f / 80f;
-            p2x = x2 + (x2 - x1) * 30f / 40f;
-            p2y = y1 + (x2 - x1) * 3 * 56.65f / 80f;
+//            p1x = x1 - (x2 - x1) * 30f / 40f;
+//            p1y = y1 - (x2 - x1) * 3 * 43.35f / 80f;
+//            p2x = x2 + (x2 - x1) * 30f / 40f;
+//            p2y = y1 + (x2 - x1) * 3 * 56.65f / 80f;
+            p1x = x1 - (x2 - x1) * 38.5f / 23f;
+            p1y = y1 - (x2 - x1) * 3f * 40f / 46f;
+            p2x = x2 + (x2 - x1) * 38.5f / 23f;
+            p2y = y1 + (x2 - x1) * 3f * 60f / 46f;
         }
 
         invalidate();
