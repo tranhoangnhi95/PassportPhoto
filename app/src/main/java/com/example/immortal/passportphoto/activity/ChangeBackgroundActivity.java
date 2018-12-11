@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +27,8 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
@@ -101,20 +104,53 @@ public class ChangeBackgroundActivity extends AppCompatActivity implements View.
     }
 
     private Bitmap hsvSegmentation(Bitmap src) {
+        ArrayList<Float> arrayListH, arrayListS, arrayListV;
         Bitmap result = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
         Bitmap mask = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
         Mat mMask = new Mat();
-        int A, R, G, B, pixel;
-        float currentH, H;
+        arrayListH = new ArrayList<Float>();
+        arrayListS = new ArrayList<Float>();
+        arrayListV = new ArrayList<Float>();
+        int A, R, G, B, pixel, A1, R1, G1, B1, pixel1;
+        float currentH, currentS, currentV, H, S, V;
         float[] hsv = new float[3];
 
-        pixel = src.getPixel(0, 0);
-        R = Color.red(pixel);
-        G = Color.green(pixel);
-        B = Color.blue(pixel);
+        for (int i = 0; i < 5; i++) {
+            switch (i) {
+                case 1:
+                    pixel = src.getPixel(src.getWidth() / 2, 1);
+                    break;
+                case 2:
+                    pixel = src.getPixel(src.getWidth() - 1, 1);
+                    break;
+                case 3:
+                    pixel = src.getPixel(3, src.getHeight() / 2 - 5);
+                    break;
+                case 4:
+                    pixel = src.getPixel(src.getWidth() - 3, src.getHeight() / 2 - 5);
+                    break;
+                default:
+                    pixel = src.getPixel(1, 1);
+                    break;
+            }
+            R = Color.red(pixel);
+            G = Color.green(pixel);
+            B = Color.blue(pixel);
 
-        Color.RGBToHSV(R, G, B, hsv);
-        currentH = hsv[0];
+            Color.RGBToHSV(R, G, B, hsv);
+
+//            currentH = hsv[0];
+            arrayListH.add(hsv[0]);
+            arrayListS.add(hsv[1]);
+            arrayListV.add(hsv[2]);
+        }
+        Collections.sort(arrayListH);
+        Collections.sort(arrayListS);
+        Collections.sort(arrayListV);
+
+        currentH = arrayListH.get(2);
+        currentS = arrayListS.get(2);
+        currentV = arrayListV.get(2);
 
         for (int i = 0; i < src.getWidth(); i++) {
             for (int j = 0; j < src.getHeight(); j++) {
@@ -124,28 +160,31 @@ public class ChangeBackgroundActivity extends AppCompatActivity implements View.
                 G = Color.green(pixel);
                 B = Color.blue(pixel);
                 Color.RGBToHSV(R, G, B, hsv);
-
                 H = hsv[0];
+                S = hsv[1];
+                V = hsv[2];
 
-//                if (H == currentH) {
-//                    hsv[0] = hsv[1] = hsv[2] = 0;
-//                }
-//                else
                 result.setPixel(i, j, Color.argb(A, R, G, B));
-                if (H >= currentH - 10 && H <= currentH + 10) {
-                    hsv[0] = hsv[1] = hsv[2] = 0;
-                    A = 0;
-                    mask.setPixel(i, j, Color.HSVToColor(A, hsv));
+                if (H >= currentH - 15 && H <= currentH + 15 && S >= currentS - 40f/ 100f && S <= currentS + 40f / 100f
+                        && V >= currentV - 40f / 100f && V <= currentV + 40f / 100f) {
+                    //background
+//     hsv[0] = hsv[1] = hsv[2] = 0;
+                    mask.setPixel(i, j, Color.argb(0, 0, 0, 0));
                 } else {
+                    //foreground
                     A = 255;
-                    G = R = B = 0;
+                    G = R = B = 255;
                     mask.setPixel(i, j, Color.argb(A, R, G, B));
                 }
 
             }
         }
+
         Utils.bitmapToMat(mask, mMask);
-        Imgproc.GaussianBlur(mMask, mMask, new Size(5, 5), 1/273);
+        Imgproc.erode(mMask, mMask, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3)));
+        Imgproc.dilate(mMask, mMask, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(6, 6)));
+        Imgproc.erode(mMask, mMask, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3)));
+        Imgproc.GaussianBlur(mMask, mMask, new Size(3, 3), 1 / 273);
         Utils.matToBitmap(mMask, mask);
         for (int i = 0; i < src.getWidth(); i++) {
             for (int j = 0; j < src.getHeight(); j++) {
@@ -155,35 +194,22 @@ public class ChangeBackgroundActivity extends AppCompatActivity implements View.
                 G = Color.green(pixel);
                 B = Color.blue(pixel);
 
-                if (A == 0 && R == 0 && G == 0 && B == 0) {
-                    result.setPixel(i, j, Color.argb(0, 0, 0, 0));
-                }
+
+                pixel1 = src.getPixel(i, j);
+                A1 = Color.alpha(pixel1);
+                R1 = Color.red(pixel1);
+                G1 = Color.green(pixel1);
+                B1 = Color.blue(pixel1);
+
+                A1 = (int) (A / 255f) * A1;
+                R1 = (int) (R / 255f) * R1;
+                G1 = (int) (G / 255f) * G1;
+                B1 = (int) (B / 255f) * B1;
+
+                result.setPixel(i, j, Color.argb(A1, R1, G1, B1));
             }
         }
         return result;
-    }
-
-    private List<MatOfPoint> findBitmapCotour(Bitmap src) {
-        Mat mGray = new Mat();
-        Mat cannyOutput = new Mat();
-        List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-        Mat hierarchy = new Mat();
-        Bitmap result = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
-        Utils.bitmapToMat(src, mGray);
-        Imgproc.cvtColor(mGray, mGray, Imgproc.COLOR_RGBA2GRAY);
-        Imgproc.blur(mGray, mGray, new Size(9, 9));
-        Imgproc.Canny(mGray, cannyOutput, 50, 200);
-
-        Imgproc.findContours(cannyOutput, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_NONE);
-
-//        Mat drawing = Mat.zeros(cannyOutput.size(), CvType.CV_8UC3);
-//        for (int i = 0; i < contours.size(); i++) {
-//            Scalar color = new Scalar(0, 255, 0);
-//            Imgproc.drawContours(drawing, contours, i, color, 2, Core.LINE_8, hierarchy, 0, new Point());
-//        }
-
-//        Utils.matToBitmap(drawing, result);
-        return contours;
     }
 
     private void openDialog(boolean supportsAlpha) {

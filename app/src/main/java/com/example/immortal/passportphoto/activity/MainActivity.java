@@ -1,5 +1,6 @@
 package com.example.immortal.passportphoto.activity;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -8,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -36,8 +38,12 @@ import org.opencv.objdetect.CascadeClassifier;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -46,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int CAM_REQUEST = 1313;
     private static final int PICK_REQUEST = 1212;
     private Bitmap bitmapImage;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +90,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void captureNewImage() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, CAM_REQUEST);
+
+//        Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        if (pictureIntent.resolveActivity(getPackageManager()) != null) {
+//            File photoFile = null;
+//            try {
+//                photoFile = createImageFile();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            if (photoFile != null){
+//                Uri photoURI = FileProvider.getUriForFile(this,"com.example.android.provider",photoFile);
+//
+//            }
+//            startActivityForResult(pictureIntent, CAM_REQUEST);
+//        }
+
     }
 
     private void selectImageFromGallery() {
@@ -101,11 +124,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onActivityResult(requestCode, resultCode, data);
         Intent iToRotationImage = new Intent(MainActivity.this, RotationImageActivity.class);
         if (resultCode == RESULT_OK && requestCode == CAM_REQUEST) {
-            bitmapImage = (Bitmap) data.getExtras().get("data");
+//            bitmapImage = (Bitmap) data.getExtras().get("data");
+//
+//            imageUri = getImageUri(getApplicationContext(), bitmapImage);
+//            iToRotationImage.putExtra("img", imageUri.toString());
+//            startActivity(iToRotationImage);
 
-            imageUri = getImageUri(getApplicationContext(), bitmapImage);
-            iToRotationImage.putExtra("img", imageUri.toString());
-            startActivity(iToRotationImage);
+
         } else if (resultCode == RESULT_OK && requestCode == PICK_REQUEST) {
             imageUri = data.getData();
             iToRotationImage.putExtra("img", imageUri.toString());
@@ -120,4 +145,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return Uri.parse(path);
     }
 
+
+//    private File createImageFile() throws IOException {
+//        String timeStamp =
+//                new SimpleDateFormat("yyyyMMdd_HHmmss",
+//                        Locale.getDefault()).format(new Date());
+//        String imageFileName = "IMG_" + timeStamp + "_";
+//        File storageDir =
+//                getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+//        File image = File.createTempFile(
+//                imageFileName,  /* prefix */
+//                ".jpg",         /* suffix */
+//                storageDir      /* directory */
+//        );
+//
+//        imageFilePath = image.getAbsolutePath();
+//        return image;
+//    }
 }
